@@ -77,8 +77,9 @@ services:
             - .venv
         - path: ./backend/pyproject.toml
           action: rebuild
-    # TODO: remove once coverage is done locally
     volumes:
+      - ./backend:/app
+      - backend-venv:/app/.venv # Use named volume to persist venv with dependencies
       - ./backend/htmlcov:/app/htmlcov
     environment:
       SMTP_HOST: "mailcatcher"
@@ -131,3 +132,6 @@ networks:
   traefik-public:
     # For local dev, don't expect an external Traefik network
     external: false
+
+volumes:
+  backend-venv: # Named volume to persist backend venv with dependencies

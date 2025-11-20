@@ -94,6 +94,12 @@ class Settings(BaseSettings):
     FIRST_SUPERUSER: EmailStr
     FIRST_SUPERUSER_PASSWORD: str
 
+    # MQTT Configuration
+    MQTT_BROKER: str = "mqtt"
+    MQTT_PORT: int = 1883
+    MQTT_USERNAME: str | None = None
+    MQTT_PASSWORD: str | None = None
+
     def _check_default_secret(self, var_name: str, value: str | None) -> None:
         if value == "changethis":
             message = (
