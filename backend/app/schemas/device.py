@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 from typing import Any
 
-from sqlmodel import SQLModel
+from sqlmodel import Column, Field, SQLModel
 from app.models.device import DeviceBase, DeviceStatus
 
 class DeviceCreate(DeviceBase):
@@ -31,4 +31,4 @@ class DeviceRegister(SQLModel):
     device_id: str
     name: str
     location: str | None = None
-    capabilities: dict[str, Any] | None = None
+    capabilities: dict[str, Any] = Field(default_factory=dict)

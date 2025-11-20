@@ -128,76 +128,76 @@ Overall:                     [█░░░░░░░░░░░░░░░�
 
 ---
 
-#### Week 3: CRUD APIs ⏳ **NOT STARTED**
+#### Week 3: CRUD APIs ✅ **COMPLETED**
 
 **Estimated Time:** 10-12 hours
 
 **Backend CRUD:**
-- [ ] Restructure backend to modular pattern (2 hours)
-  - [ ] Create `/backend/app/crud/` directory
-  - [ ] Move existing CRUD to `/backend/app/crud/crud_user.py`
-  - [ ] Move existing CRUD to `/backend/app/crud/crud_item.py`
-  - [ ] Delete flat `/backend/app/crud.py` file
+- [x] Restructure backend to modular pattern (2 hours)
+  - [x] Create `/backend/app/crud/` directory
+  - [x] Move existing CRUD to `/backend/app/crud/crud_user.py`
+  - [x] Move existing CRUD to `/backend/app/crud/crud_item.py`
+  - [x] Delete flat `/backend/app/crud.py` file
 
-- [ ] Create `/backend/app/crud/crud_experiment.py` (2 hours)
-  - [ ] `create_experiment(db, experiment_in, user_id)`
-  - [ ] `get_experiment(db, experiment_id)`
-  - [ ] `get_experiments(db, skip, limit, user_id)`
-  - [ ] `update_experiment(db, experiment_id, experiment_in)`
-  - [ ] `delete_experiment(db, experiment_id)`
+- [x] Create `/backend/app/crud/crud_experiment.py` (2 hours)
+  - [x] `create_experiment(db, experiment_in, user_id)`
+  - [x] `get_experiment(db, experiment_id)`
+  - [x] `get_experiments(db, skip, limit, user_id)`
+  - [x] `update_experiment(db, experiment_id, experiment_in)`
+  - [x] `delete_experiment(db, experiment_id)`
 
-- [ ] Create `/backend/app/crud/crud_device.py` (2 hours)
-  - [ ] `create_device(db, device_in, user_id)`
-  - [ ] `get_device(db, device_id)`
-  - [ ] `get_devices(db, skip, limit)`
-  - [ ] `update_device(db, device_id, device_in)`
-  - [ ] `delete_device(db, device_id)`
-  - [ ] `get_device_by_device_id(db, device_id)` (for edge agent lookup)
-  - [ ] `update_device_heartbeat(db, device_id)`
+- [x] Create `/backend/app/crud/crud_device.py` (2 hours)
+  - [x] `create_device(db, device_in, user_id)`
+  - [x] `get_device(db, device_id)`
+  - [x] `get_devices(db, skip, limit)`
+  - [x] `update_device(db, device_id, device_in)`
+  - [x] `delete_device(db, device_id)`
+  - [x] `get_device_by_device_id(db, device_id)` (for edge agent lookup)
+  - [ ] `update_device_heartbeat(db, device_id)` (Deferred to Week 4/9)
 
 **API Routes:**
-- [ ] Create `/backend/app/api/routes/experiments.py` (2-3 hours)
-  - [ ] `GET /api/experiments` - List all experiments (with pagination)
-  - [ ] `POST /api/experiments` - Create new experiment
-  - [ ] `GET /api/experiments/{id}` - Get single experiment
-  - [ ] `PUT /api/experiments/{id}` - Update experiment
-  - [ ] `DELETE /api/experiments/{id}` - Delete experiment
-  - [ ] Add proper authentication checks
-  - [ ] Add ownership validation
+- [x] Create `/backend/app/api/routes/experiments.py` (2-3 hours)
+  - [x] `GET /api/experiments` - List all experiments (with pagination)
+  - [x] `POST /api/experiments` - Create new experiment
+  - [x] `GET /api/experiments/{id}` - Get single experiment
+  - [x] `PUT /api/experiments/{id}` - Update experiment
+  - [x] `DELETE /api/experiments/{id}` - Delete experiment
+  - [x] Add proper authentication checks
+  - [x] Add ownership validation
 
-- [ ] Create `/backend/app/api/routes/devices.py` (2-3 hours)
-  - [ ] `GET /api/devices` - List all devices
-  - [ ] `POST /api/devices/register` - Register new device
-  - [ ] `GET /api/devices/{id}` - Get single device
-  - [ ] `PUT /api/devices/{id}` - Update device
-  - [ ] `DELETE /api/devices/{id}` - Delete device
-  - [ ] `POST /api/devices/heartbeat` - Update last_seen timestamp
-  - [ ] Add proper authentication checks
+- [x] Create `/backend/app/api/routes/devices.py` (2-3 hours)
+  - [x] `GET /api/devices` - List all devices
+  - [x] `POST /api/devices/register` - Register new device
+  - [x] `GET /api/devices/{id}` - Get single device
+  - [x] `PUT /api/devices/{id}` - Update device
+  - [x] `DELETE /api/devices/{id}` - Delete device
+  - [ ] `POST /api/devices/heartbeat` - Update last_seen timestamp (Deferred)
+  - [x] Add proper authentication checks
 
-- [ ] Register routes in `/backend/app/api/main.py` (15 min)
+- [x] Register routes in `/backend/app/api/main.py` (15 min)
 
 **Testing:**
-- [ ] Create `/backend/tests/api/test_experiments.py` (2 hours)
-  - [ ] Test create experiment (authenticated)
-  - [ ] Test list experiments (pagination)
-  - [ ] Test get experiment by ID
-  - [ ] Test update experiment (ownership check)
-  - [ ] Test delete experiment (ownership check)
-  - [ ] Test unauthorized access
+- [x] Create `/backend/tests/api/test_experiments.py` (2 hours)
+  - [x] Test create experiment (authenticated)
+  - [x] Test list experiments (pagination)
+  - [x] Test get experiment by ID
+  - [x] Test update experiment (ownership check)
+  - [x] Test delete experiment (ownership check)
+  - [x] Test unauthorized access
 
-- [ ] Create `/backend/tests/api/test_devices.py` (2 hours)
-  - [ ] Test device registration
-  - [ ] Test list devices
-  - [ ] Test get device by ID
-  - [ ] Test update device
-  - [ ] Test heartbeat endpoint
-  - [ ] Test unauthorized access
+- [x] Create `/backend/tests/api/test_devices.py` (2 hours)
+  - [x] Test device registration
+  - [x] Test list devices
+  - [x] Test get device by ID
+  - [x] Test update device
+  - [ ] Test heartbeat endpoint (Deferred)
+  - [x] Test unauthorized access
 
 **Completion Criteria:**
-- [ ] All API endpoints return 200 for valid requests
-- [ ] All tests pass (`pytest`)
-- [ ] Can CRUD experiments via Swagger UI (`/docs`)
-- [ ] Can CRUD devices via Swagger UI (`/docs`)
+- [x] All API endpoints return 200 for valid requests
+- [x] All tests pass (`pytest`)
+- [x] Can CRUD experiments via Swagger UI (`/docs`)
+- [x] Can CRUD devices via Swagger UI (`/docs`)
 
 ---
 

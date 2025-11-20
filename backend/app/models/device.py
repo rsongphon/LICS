@@ -32,7 +32,7 @@ class Device(DeviceBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     registered_at: datetime = Field(default_factory=datetime.utcnow)
     
-    registered_by: uuid.UUID | None = Field(foreign_key="user.id", nullable=True)
+    registered_by: uuid.UUID | None = Field(default=None, foreign_key="user.id", nullable=True)
     # owner: "User" = Relationship(back_populates="devices") # If we want to link to user
     
     api_key_hash: str | None = None
