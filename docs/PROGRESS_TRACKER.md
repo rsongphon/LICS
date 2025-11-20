@@ -65,66 +65,66 @@ Overall:                     [█░░░░░░░░░░░░░░░�
 
 ---
 
-#### Week 2: Core Data Models ⏳ **NOT STARTED**
+#### Week 2: Core Data Models ✅ **COMPLETED**
 
 **Estimated Time:** 7-10 hours
 
 **Backend Models:**
-- [ ] Create `/backend/app/models/experiment.py` (2-3 hours)
-  - [ ] Define `Experiment` SQLModel class
-  - [ ] Add fields: `id`, `name`, `description`, `created_by`, `created_at`, `updated_at`
-  - [ ] Add `psyexp_data` (JSONB) field for React Flow state
-  - [ ] Add `python_code` (TEXT) field for generated script
-  - [ ] Add `psychojs_code` (TEXT) field for web preview
-  - [ ] Add `is_active` boolean field
-  - [ ] Define relationship to `User` model
+- [x] Create `/backend/app/models/experiment.py` (2-3 hours)
+  - [x] Define `Experiment` SQLModel class
+  - [x] Add fields: `id`, `name`, `description`, `created_by`, `created_at`, `updated_at`
+  - [x] Add `psyexp_data` (JSONB) field for React Flow state
+  - [x] Add `python_code` (TEXT) field for generated script
+  - [x] Add `psychojs_code` (TEXT) field for web preview
+  - [x] Add `is_active` boolean field
+  - [x] Define relationship to `User` model
 
-- [ ] Create `/backend/app/models/device.py` (1-2 hours)
-  - [ ] Define `Device` SQLModel class
-  - [ ] Add fields: `id`, `device_id` (unique), `name`, `description`
-  - [ ] Add `status` enum field (online, offline, running)
-  - [ ] Add `config` (JSONB) field for device settings
-  - [ ] Add `capabilities` (JSONB) field for hardware info
-  - [ ] Add `last_seen` timestamp
-  - [ ] Add `registered_by` foreign key to `User`
-  - [ ] Add `api_key_hash` for device authentication
+- [x] Create `/backend/app/models/device.py` (1-2 hours)
+  - [x] Define `Device` SQLModel class
+  - [x] Add fields: `id`, `device_id` (unique), `name`, `description`
+  - [x] Add `status` enum field (online, offline, running)
+  - [x] Add `config` (JSONB) field for device settings
+  - [x] Add `capabilities` (JSONB) field for hardware info
+  - [x] Add `last_seen` timestamp
+  - [x] Add `registered_by` foreign key to `User`
+  - [x] Add `api_key_hash` for device authentication
 
 **Schemas:**
-- [ ] Create `/backend/app/schemas/` directory (30 min)
-- [ ] Create `/backend/app/schemas/experiment.py` (1 hour)
-  - [ ] `ExperimentCreate` schema
-  - [ ] `ExperimentUpdate` schema
-  - [ ] `ExperimentInDB` schema
-  - [ ] `ExperimentPublic` schema
-- [ ] Create `/backend/app/schemas/device.py` (1 hour)
-  - [ ] `DeviceCreate` schema
-  - [ ] `DeviceUpdate` schema
-  - [ ] `DeviceInDB` schema
-  - [ ] `DevicePublic` schema
-  - [ ] `DeviceRegister` schema (for edge agent registration)
+- [x] Create `/backend/app/schemas/` directory (30 min)
+- [x] Create `/backend/app/schemas/experiment.py` (1 hour)
+  - [x] `ExperimentCreate` schema
+  - [x] `ExperimentUpdate` schema
+  - [x] `ExperimentInDB` schema
+  - [x] `ExperimentPublic` schema
+- [x] Create `/backend/app/schemas/device.py` (1 hour)
+  - [x] `DeviceCreate` schema
+  - [x] `DeviceUpdate` schema
+  - [x] `DeviceInDB` schema
+  - [x] `DevicePublic` schema
+  - [x] `DeviceRegister` schema (for edge agent registration)
 
 **Database Migrations:**
-- [ ] Run `alembic revision --autogenerate -m "Add experiment and device tables"` (15 min)
-- [ ] Review generated migration file (30 min)
-- [ ] Apply migration: `alembic upgrade head` (5 min)
-- [ ] Verify tables in PostgreSQL via Adminer (15 min)
-  - [ ] Verify `experiments` table structure
-  - [ ] Verify `devices` table structure
-  - [ ] Verify foreign key constraints
-  - [ ] Verify JSONB columns
+- [x] Run `alembic revision --autogenerate -m "Add experiment and device tables"` (15 min)
+- [x] Review generated migration file (30 min)
+- [x] Apply migration: `alembic upgrade head` (5 min)
+- [x] Verify tables in PostgreSQL via Adminer (15 min)
+  - [x] Verify `experiments` table structure
+  - [x] Verify `devices` table structure
+  - [x] Verify foreign key constraints
+  - [x] Verify JSONB columns
 
 **Testing:**
-- [ ] Write basic model tests in `/backend/tests/models/` (1 hour)
-  - [ ] Test `Experiment` model creation
-  - [ ] Test `Device` model creation
-  - [ ] Test model validations
-  - [ ] Test relationships
+- [x] Write basic model tests in `/backend/tests/models/` (1 hour)
+  - [x] Test `Experiment` model creation
+  - [x] Test `Device` model creation
+  - [x] Test model validations
+  - [x] Test relationships
 
 **Completion Criteria:**
-- [ ] Both tables exist in PostgreSQL
-- [ ] Can create experiment via Python shell
-- [ ] Can create device via Python shell
-- [ ] All tests pass
+- [x] Both tables exist in PostgreSQL
+- [x] Can create experiment via Python shell
+- [x] Can create device via Python shell
+- [x] All tests pass
 
 ---
 
