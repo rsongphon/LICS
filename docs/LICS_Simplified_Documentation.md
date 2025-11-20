@@ -53,11 +53,11 @@ LICS is a streamlined laboratory control system designed specifically for behavi
 
 ### 1.3 Design Principles
 
-**Simplicity First**: Every architectural decision prioritizes maintainability over scalability. The system should be operable by a graduate student with basic technical skills.
-
-**Monolithic by Default**: Single backend service, single database, single deployment. Microservices only when absolutely necessary (never for a lab with < 50 devices).
-
-**Use Existing Tools**: Leverage the FastAPI template, PostgreSQL capabilities, and standard Python libraries rather than adding specialized services.
+- **Simplicity First:** "Boring" technology is better. Use standard tools (Postgres, Docker).
+- **Monolithic by Default:** One backend repo, one frontend repo. No microservices.
+- **Security by Design:** Devices must authenticate. Registration requires a shared secret.
+- **Use Existing Tools:** Don't reinvent the wheel. Use PsychoPy for the engine.
+- **Offline Capability:** The lab network *will* fail. Devices must keep running and sync later (Outbox Pattern).cialized services.
 
 **Offline Capability**: Edge devices must continue experiments even during network outages, with automatic data synchronization when connectivity returns.
 
@@ -76,7 +76,7 @@ The system follows a simple three-tier architecture that any developer can under
 │   - Device Management Dashboard      │
 │   - Data Visualization               │
 └────────────────┬────────────────────┘
-                 │ HTTPS/WebSocket
+                 │ WebSockets (Real-time)
 ┌────────────────▼────────────────────┐
 │     FastAPI Backend (Python)        │
 │   - REST API Endpoints              │
@@ -84,21 +84,16 @@ The system follows a simple three-tier architecture that any developer can under
 │   - Background Task Queue           │
 │   - MQTT Client for Devices         │
 └────────────────┬────────────────────┘
-                 │
+                 │ MQTT (Control/Data)
 ┌────────────────▼────────────────────┐
-│     PostgreSQL Database             │
-│   - All application data            │
-│   - User management                 │
-│   - Experiment definitions          │
-│   - Trial results                   │
-└─────────────────────────────────────┘
-                 │
-            MQTT Broker
-                 │
+│           MQTT Broker               │
+└────────────────┬────────────────────┘
+                 │ MQTT
 ┌────────────────▼────────────────────┐
 │     Edge Devices (Raspberry Pi)     │
-│   - PsychoPy Runtime                │
-│   - Local SQLite Cache              │
+│   - Dockerized Agent (Container)    │
+│   - PsychoPy Runtime Environment    │
+│   - Local SQLite Cache (Outbox)     │
 │   - GPIO Hardware Control           │
 └─────────────────────────────────────┘
 ```
@@ -143,6 +138,7 @@ Based on the [FastAPI Full-Stack Template](https://github.com/fastapi/full-stack
 - **SQLAlchemy 2.0**: ORM with async support
 - **Alembic**: Database migration management
 - **Pydantic**: Data validation and settings management
+- **fastapi-apscheduler**: Scheduled tasks management
 - **Python 3.11+**: Latest stable Python version
 
 **Frontend:**
@@ -503,7 +499,19 @@ For anything longer, results are cached and users are notified when complete.
 - reaction_time: Float milliseconds
 - correct: Boolean if applicable
 - custom_data: JSON - Additional trial data
+**trial_results**
+- id: UUID primary key
+- deployment_id: Foreign key to deployments
+- trial_number: Sequential trial number
+- started_at: Trial start timestamp
+- ended_at: Trial end timestamp
+- response: JSON - Response data
+- reaction_time: Float milliseconds
+- correct: Boolean if applicable
+- custom_data: JSON - Additional trial data
 - synced_at: When synced from device
+
+> **Note:** This table is for *trial-level* summary data. High-frequency time-series data (e.g., 100Hz eye tracking) should be stored as binary blobs or flat files referenced here, not as individual rows, to prevent database bloat.
 
 **device_logs**
 - id: UUID primary key
@@ -918,71 +926,63 @@ services:
 
 ## 16. Implementation Roadmap
 
-### 16.1 Phase 1: Foundation (Weeks 1-4)
+**Total Timeline: 16 Weeks**
 
-**Week 1-2: Setup & Authentication**
-- Fork FastAPI template
-- Configure for lab requirements
-- Setup Docker environment
-- Basic user authentication
-- Database schema creation
+### Phase 1: Foundation (Weeks 1-2)
+- Setup FastAPI backend and Next.js frontend
+- Database schema design and migration setup
+- Basic user authentication and management
+- Docker Compose environment
 
-**Week 3-4: Core Models & APIs**
-- Implement experiment model
-- Device registration API
-- Basic CRUD operations
-- MQTT integration
-- Simple frontend with Next.js
+### Phase 2: PsychoPy Builder MVP (Weeks 3-8)
+- **Strict MVP**: Text, Image, and Keyboard components only
+- React Flow integration for timeline
+- Component property panels
+- .psyexp file generation
+- Python code compilation engine
 
-### 16.2 Phase 2: PsychoPy Builder (Weeks 5-8)
+### Phase 3: Device Management (Weeks 9-11)
+- MQTT broker setup and integration
+- Raspberry Pi agent implementation
+- Device registration and heartbeat
+- Remote command execution
 
-**Week 5-6: Builder UI**
-- React Flow timeline
-- Component palette
-- Property panels
-- Drag-and-drop functionality
+### Phase 4: Data & Integration (Weeks 12-14)
+- Trial result collection and storage
+- Data export functionality
+- Real-time dashboard updates
+- End-to-end system testing
 
-**Week 7-8: Code Generation**
-- XML parsing for .psyexp files
-- Python code generation
-- Component library
-- Validation system
+### Phase 5: Polish & Deployment (Weeks 15-16)
+- Documentation and user guides
+- Deployment to lab server
+- Training for lab members
+- Final bug fixes
 
-### 16.3 Phase 3: Edge Integration (Weeks 9-10)
+---
 
-**Week 9: Edge Agent**
-- Raspberry Pi agent development
-- MQTT command handling
-- Local SQLite storage
-- Heartbeat system
+## 17. Operational Strategy
 
-**Week 10: Hardware Integration**
-- GPIO control library
-- Hardware component mapping
-- Testing with real devices
-- Error handling
+### 17.1 Backup & Recovery
 
-### 16.4 Phase 4: Data & Deployment (Weeks 11-12)
+**Database Backups:**
+- Daily automated `pg_dump` to local storage
+- Retention: Keep last 7 daily, 4 weekly, and 6 monthly backups
+- Scripted restore procedure for disaster recovery
 
-**Week 11: Data Management**
-- Trial result collection
-- Data synchronization
-- Export functionality
-- Basic analytics
+**Configuration Backup:**
+- Weekly backup of `.env` files and docker-compose configurations
+- Manual backup required before major updates
 
-**Week 12: Deployment & Testing**
-- Production deployment
-- End-to-end testing
-- Documentation
-- User training
+### 17.2 Maintenance
 
-### 16.5 Phase 5: Polish & Launch (Weeks 13-14)
+**Log Management:**
+- Application logs rotated daily, kept for 30 days
+- Device logs stored in database, pruned after 90 days
 
-**Week 13-14: Refinement**
-- Bug fixes from testing
-- Performance optimization
-- UI/UX improvements
-- Final documentation
+**System Updates:**
+- Monthly OS security updates
+- Quarterly dependency updates (Python/Node packages)
 
 ---
 

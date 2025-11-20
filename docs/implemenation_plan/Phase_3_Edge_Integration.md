@@ -100,11 +100,18 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
     * Subscription to `devices/{self_id}/command`.
     * Regular heartbeats published to `devices/{self_id}/heartbeat`.
     * Handler for the "run" command:
-        1.  Fetches script from `/script`.
-        2.  Saves script to a local `.py` file.
-        3.  Publishes "running" status.
-        4.  Executes script with `subprocess.run()`.
-        5.  Publishes "completed" or "failed" status on exit.
+        1.  **Publishes `ack` to `devices/{self_id}/ack` (QoS 1).**
+        2.  Fetches script from `/script`.
+        3.  Saves script to a local `.py` file.
+        4.  Publishes "running" status.
+        5.  Executes script with `subprocess.run()`.
+        6.  Publishes "completed" or "failed" status on exit.
+    * **Offline Sync Strategy (Store-and-Forward):**
+        *   Agent maintains a local SQLite queue (`queue.db`) for trial data.
+        *   When `subprocess` finishes, data is written to this local queue.
+        *   A background thread checks connectivity every 60s.
+        *   If online: Flushes queue to `devices/{self_id}/data` (QoS 1).
+        *   If offline: Keeps data in queue until next check.
 * **Database:**
     * New `experiment_deployments` table.
     * Migration to add `device_api_key`, `status`, `last_seen` to the `devices` table.
@@ -166,6 +173,9 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
         3.  Uses a `db_session` to find the `ExperimentDeployment` and update its `status`.
         4.  If `payload.status` is "running", set `started_at`.
         5.  If `payload.status` is "completed" or "failed", set `completed_at`.
+    * **NEW** `def on_ack_message(topic, payload)`:
+        *   Updates `ExperimentDeployment` to indicate "Command Received" (optional, but good for debugging).
+    * **Reliability:** All publications to `devices/+/command` must use **QoS 1** (At Least Once).
 
 **Edge (`edge/` Directory - ALL NEW):**
 * **`agent.py`:**
@@ -275,6 +285,35 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
 ---
 
 ### 5. API and Interface Specifications
+
+#### 5.1 Device Authentication Flow (Sequence Diagram)
+
+```mermaid
+sequenceDiagram
+    participant Admin
+    participant Backend
+    participant DB
+    participant Agent (Pi)
+
+    Note over Admin, Agent (Pi): 1. Registration (One-Time)
+    Admin->>Backend: POST /api/devices/register
+    Backend->>DB: Create Device (status=offline)
+    Backend->>Backend: Generate API Key (k) & Hash (h)
+    Backend->>DB: Store Hash (h)
+    Backend-->>Admin: Return Plaintext Key (k)
+    Admin->>Agent (Pi): Manually configure config.ini with Key (k)
+
+    Note over Agent (Pi), DB: 2. Authentication (Recurring)
+    Agent (Pi)->>Backend: POST /api/devices/auth {key: k}
+    Backend->>DB: Fetch Device by ID
+    Backend->>Backend: Verify Hash(k) matches DB
+    Backend-->>Agent (Pi): Return JWT (Access Token)
+    
+    Note over Agent (Pi), Backend: 3. Authorized Operations
+    Agent (Pi)->>Backend: PUT /heartbeat (Header: Bearer JWT)
+    Backend->>Backend: Validate JWT
+    Backend-->>Agent (Pi): 200 OK
+```
 
 * **Endpoint:** `POST /api/devices/register` (Modified)
     * **Purpose:** Register a new Pi. Returns a *one-time* API key.
@@ -505,7 +544,7 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
     * (Manual) Set up a real Pi.
     * Run `setup.sh`.
     * Log in to UI.
-    * Create/Compile experiment.
+    * Create/Compile experiment (MVP: Text + Keyboard).
     * Click "Deploy," select the Pi.
     * Go to `/deployments` page, refresh, and watch status change (pending -> running -> completed).
     * Check Pi `systemd` logs: `journalctl -u lics-agent.service -f`.
@@ -518,8 +557,9 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
 * **Authentication (Device):** This is the **critical** implementation.
     1.  **Key at Rest:** The `device_api_key` is *hashed* in the DB using `passlib`. A plaintext key is *never* stored on the server.
     2.  **Key in Transit (Initial):** The agent receives the *plaintext* key on registration. This relies on the Phase 1 assumption of network isolation.
-    3.  **Token Auth:** The agent exchanges this static, long-lived key for a *scoped, short-lived JWT*.
+    3.  **Token Auth:** The agent exchanges this static, long-lived key for a *scoped, short-lived JWT* via `POST /api/devices/auth`.
     4.  **Endpoint Protection:** The `/script` and `/heartbeat` endpoints **must** use a new dependency `deps.get_current_device` that validates this "device" scoped JWT. A *user* JWT must not be able to call these endpoints.
+    5.  **Token Validation:** All data ingestion endpoints (Phase 4) must also validate this JWT to ensure data is coming from a legitimate device.
 * **Authorization:**
     * The `POST /deploy` endpoint **must** check that `experiment.created_by == current_user.id`. A user cannot deploy another user's experiment.
 * **Code Injection Risk (From Phase 2):** The `agent.py` executes code from the DB. We are explicitly *accepting* this risk. The mitigation is that a user must be authenticated to *create* the code (Phase 2) and to *deploy* it (Phase 3). We are trusting our authenticated users.
@@ -625,6 +665,12 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
 * **Technical Risk 3: Device "Orphaning"**
     * **Likelihood:** Medium. Agent `POSTs /deploy`, then Pi loses power. Backend shows "pending" forever.
     * **Mitigation:** The `PUT /heartbeat` is the fix. The backend can have a background task (Phase 4) that sweeps for devices with `last_seen > 5 minutes` and sets their `status` to "offline." The UI should *not* allow deploying to an "offline" device.
+* **Technical Risk 4: Data Loss During Outage**
+    * **Likelihood:** High. Lab networks are flaky.
+    * **Mitigation:** **Store-and-Forward**. The Agent must not delete data until it confirms successful upload (or in Phase 3, successful flush to queue).
+* **Technical Risk 5: Command Loss**
+    * **Likelihood:** Medium.
+    * **Mitigation:** **MQTT QoS 1** + Application Level ACK. The backend will retry sending the "run" command if the broker doesn't acknowledge, and the agent sends an explicit `ack` message.
 
 ---
 
@@ -660,3 +706,4 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
     * Your `on_message` handler for these topics will parse the incoming JSON and save it to the database.
     * You will also build the "Data Visualization" UI to read from these tables.
     * You will implement the WebSocket integration to make the UI update in real-time, using the MQTT events as the *trigger* to push a WebSocket message.
+    * **CRITICAL:** Your data ingestion endpoints must validate the **Device JWT** (implemented in Phase 3) to ensure data integrity. Do not accept data from unauthenticated sources.

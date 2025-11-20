@@ -80,8 +80,11 @@ This phase is about *catching* that data. We will implement the backend ingestio
 
 #### 2.1 What IS included in this phase
 * **Backend - Data Ingestion:**
-    * Database tables for `trial_results` and `device_logs`.
-    * Alembic migration for these tables.
+   ### 1. Database (PostgreSQL)
+- **New Table:** `trial_results` (JSONB for flexible data)
+- **New Table:** `device_logs` (Text/JSON for debugging)
+- **Optimization:** Indexes on `deployment_id` and `created_at`.
+- **Constraint:** This store is for *summary* data (e.g., reaction times, choices). **High-frequency time-series data (e.g., 100Hz raw gaze)** should NOT be stored here row-by-row. It should be saved as a file/blob and referenced, or aggregated.
     * `core/mqtt.py` subscribes to `devices/+/data` and `devices/+/logs`.
     * `on_message` handler for `.../data` that parses JSON and creates a `TrialResult` record.
     * `on_message` handler for `.../logs` that parses JSON and creates a `DeviceLog` record.
@@ -150,7 +153,12 @@ This phase primarily modifies the **Backend** and **Frontend**, creating a new d
         * `data['device_id'] = topic.split('/')[1]`
         * `validated_data = schemas.DeviceLogCreate(**data)`
         * `crud.device_log.create(db, obj_in=validated_data)`
+        * `crud.device_log.create(db, obj_in=validated_data)`
         * **`self.websocket_manager.broadcast({"type": "new_log", "payload": ...})`**
+    * **Error Handling (Refined):**
+        * Wrap all message processing in a broad `try...except Exception as e:` block.
+        * Log the error with `logger.error("MQTT Ingestion Failed", exc_info=True, extra={"payload": payload})`.
+        * **Dead Letter Queue (Concept):** If parsing fails, publish the raw payload to a `sys/dlq` topic (or save to a `failed_ingestions` table if critical) to prevent data loss and allow replay.
 
 **Data Flow: `Backend -> WebSocket -> Frontend` (Real-time UI)**
 
@@ -167,7 +175,10 @@ This phase primarily modifies the **Backend** and **Frontend**, creating a new d
         * `if not user: await websocket.close(); return`
         * `await manager.connect(websocket)`
         * `try: while True: await websocket.receive_text()` (Keep connection open)
+        * `try: while True: await websocket.receive_text()` (Keep connection open)
         * `except WebSocketDisconnect: manager.disconnect(websocket)`
+    * **Scalability Note:** This in-memory manager is a single point of failure. If the backend restarts, all clients disconnect.
+    * **Client Reconnect Strategy:** The frontend `useWebSocket` hook MUST implement exponential backoff reconnection logic (e.g., retry after 1s, 2s, 4s, 8s) to handle server restarts gracefully without user intervention.
 2.  **`backend/core/mqtt.py` (Modified):**
     * The service must be initialized with a reference to the `ConnectionManager`.
     * `on_status_message(topic, payload)` (from Phase 3):
@@ -200,11 +211,25 @@ This phase primarily modifies the **Backend** and **Frontend**, creating a new d
           "trial_number": 10,
           "started_at": "2025-11-25T10:30:01.123Z",
           "ended_at": "2025-11-25T10:30:02.456Z",
-          "response": { "key_pressed": "space", "correct": true },
+          "response": { 
+            "key_pressed": "space", 
+            "correct": true,
+            "rt": 0.345
+          },
           "reaction_time": 345.6,
           "correct": true,
-          "custom_data": { "stimulus_name": "image_01.png", "condition": "A" }
+          "custom_data": { 
+            "stimulus_name": "image_01.png", 
+            "condition": "A",
+            "block": 1
+          }
         }
+        ```
+    * **Schema Definition (Explicit):**
+        * `response`: `Dict[str, Any]` - Flexible JSON blob for response details (keys, mouse coords, etc.).
+        * `custom_data`: `Dict[str, Any]` - Flexible JSON blob for variable trial parameters.
+        * `reaction_time`: `float` (ms) - Top-level for easy querying.
+        * `correct`: `bool` - Top-level for easy querying.
         ```
     * `devices/{device_id}/logs` (Payload: `DeviceLogCreate` subset)
         ```json
@@ -242,7 +267,11 @@ This phase primarily modifies the **Backend** and **Frontend**, creating a new d
         6.  **MQTT:** Implement `on_data_message` and `on_log_message`. Use Pydantic to validate payloads. Wrap in `try...except` to log malformed data without crashing.
         7.  **Testing (Ingestion):** Use an MQTT client (e.g., MQTTX) to *manually* publish payloads to the topics. Verify records appear in the PostgreSQL database.
         8.  **REST API:** Create `api/routes/results.py`. Implement `GET /api/deployments/{id}/results` and `GET /api/devices/{id}/logs`.
-        9.  **Export:** Implement `GET /api/deployments/{id}/export/csv`. Use `StreamingResponse` with a generator function to build the CSV row by row, preventing high memory use.
+        9.  **Export:** Implement `GET /api/deployments/{id}/export/csv`.
+            *   **Smart CSV Logic (Two-Pass):**
+                1.  **Pass 1 (Scan):** Iterate through *all* trial results for the deployment. Collect the union of all keys in `response` and `custom_data` (e.g., `response.key`, `custom.stim`).
+                2.  **Pass 2 (Stream):** Create a CSV generator. Write the header row (Fixed cols + Sorted Union keys). Iterate through results again (or use the list from Pass 1), flattening each record into a row matching the header. Fill missing keys with `null`/empty string.
+                3.  Return as `StreamingResponse`.
         10. **Compiler:** Modify `psychopy/compiler.py` and `.j2` templates to add `lics_publisher` hooks.
         11. **Edge:** Create and deploy `edge/lics_publisher.py` (can be part of `setup.sh`).
     * **Outputs:** A fully functional backend data pipeline. Data is being saved, and it can be retrieved via REST.
@@ -509,11 +538,12 @@ This phase primarily modifies the **Backend** and **Frontend**, creating a new d
 
 ### 9. Security Implementation
 
-* **WebSocket Authentication (CRITICAL):**
-    * The `/ws` endpoint *cannot* use standard `Authorization: Bearer` headers.
-    * Authentication must be performed via a query parameter: `.../ws?token={jwt_token}`.
-    * A new dependency, `get_current_user_from_token(token: str = Query(...))`, must be created. It will use the same logic as `deps.get_current_active_user` but read the token from the query string.
-    * This dependency **must** be in the `Depends()` for the `/ws` endpoint. Unauthenticated connections must be rejected.
+*#### **2. WebSocket Authentication**
+- **Challenge:** Standard JS `WebSocket` API doesn't support custom headers.
+- **Solution:**
+    - **Option A (Preferred):** Use `Sec-WebSocket-Protocol` header to pass the token.
+    - **Option B (Fallback):** Short-lived "Ticket" in Query Param (`?ticket=xyz`). Avoid sending long-lived JWTs in query params to prevent logging leaks.
+    - **Implementation:** Verify token in `on_connect`. Disconnect immediately if invalid.
 * **Data Ingestion Security:**
     * All data from MQTT is "untrusted" (even from an authenticated device).
     * **All** payloads *must* be parsed and validated by Pydantic schemas (`TrialResultCreate`, `DeviceLogCreate`).

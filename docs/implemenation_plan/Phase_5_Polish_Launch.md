@@ -19,15 +19,20 @@ This phase addresses technical debt accumulated in Phases 1-4, smooths out the u
     * Optimize the Builder (Phase 2) by lazy-loading the heavy Monaco code editor.
 * **Conduct E2E Testing:** Perform a full, manual end-to-end test of the entire user flow (from login to data analysis) to find and fix bugs.
 * **Create User Documentation:** Write a `USER_GUIDE.md` for the end-user (researcher) explaining how to use the system.
+* **Create Operational Runbooks:** Write a "Maintenance & Operations" guide for the system administrator (e.g., graduate student) covering backup, log rotation, and disk monitoring.
 
 **Success Criteria:**
 * A user can load the new `/analytics` page and see a chart summarizing their experiment data.
 * The "Export CSV" button generates a file with columns for all nested keys in `response` and `custom_data`.
 * A Raspberry Pi that stops sending heartbeats for 5+ minutes automatically transitions from "online" to "offline" in the UI without manual intervention.
-* The application *feels* responsive: loading data shows a spinner, and empty tables show helpful text.
-* The Builder page loads noticeably faster due to lazy-loading the editor.
+* A Raspberry Pi that stops sending heartbeats for 5+ minutes automatically transitions from "online" to "offline" in the UI without manual intervention.
+* **UI Polish Acceptance:**
+    * All data lists (Experiments, Devices, Deployments) display a "Loading..." spinner while fetching data.
+    * All data lists display a helpful "Empty State" component (icon + text + action button) when no data is present.
+    * The Builder page loads the Monaco editor asynchronously, showing a skeleton loader initially.
 * A new developer can follow the E2E test script and successfully complete the entire workflow.
 * A researcher can read `USER_GUIDE.md` and understand how to provision a Pi and run an experiment.
+* An administrator can read the "Maintenance & Operations" section and perform a database backup and restore.
 
 #### 1.2 Why this phase is sequenced at this point in the project
 Phases 1-4 were about "making it work." This phase is about "making it *good*." It is the final "quality gate" before handing the system over to users. It logically follows Phase 4 because it relies on the `trial_results` data to build analytics and has a complete system to test and polish.
@@ -77,10 +82,16 @@ This is the final phase of LICS v1.0. Completion of this phase signifies the "la
     * **"Smart" CSV Export:** Modify the `GET /api/deployments/{id}/export/csv` (from P4) to scan all `trial_results` first, build a *union* of all keys from the `response` and `custom_data` JSON, and use this union as the header.
     * **Orphaned Device Sweeper:** Add `fastapi-apscheduler` to the backend. Create a background job that runs every 5 minutes, finds devices with `status == 'online'` and `last_seen < (now - 5 minutes)`, and updates their `status` to `'offline'`.
 * **Frontend:**
-    * **Analytics Page:** A new page at `/analytics` that uses `recharts` to display a `BarChart` of the data from the new analytics API.
+    * **Analytics Page:** A new page at `/analytics` that uses `recharts` to display a `BarChart` of the data from the new analytics API. **Scope restricted to SQL aggregations (AVG, COUNT) only.**
     * **UI Polish (Loaders):** Add `LoadingSpinner` components to `DeploymentsList`, `DeviceList`, `DeploymentResultsPage`, and `AnalyticsPage` that display while `useQuery` is `isLoading`.
     * **UI Polish (Empty States):** Create an `EmptyState` component and add it to `ExperimentList`, `DeviceList`, etc., to display when `data.length === 0`.
     * **UI Polish (Optimization):** Use `next/dynamic` to lazy-load the `CodePreview` (Monaco editor) component on the Builder page to improve its initial load time.
+* **Documentation:**
+    * A top-level `USER_GUIDE.md` written for non-technical researchers.
+    * **Operational Runbooks:** A new section in the documentation (or `OPERATIONS.md`) covering:
+        1.  **Database Backup:** How to use `pg_dump` to back up the `lics` database.
+        2.  **Log Rotation:** How to configure `docker` logging drivers or manually rotate logs to prevent disk fill-up.
+        3.  **Disk Monitoring:** Simple commands (`df -h`) to check disk space on the server and Pi.
 * **Testing:**
     * A full, manual E2E test-a-thon covering the "golden path" (Login -> Create Exp -> Compile -> Deploy -> Run -> See Live Data -> See Analytics -> Export CSV).
     * Unit tests for the new `get_analytics` CRUD function and the smart CSV export logic.
@@ -94,7 +105,7 @@ This is the final phase of LICS v1.0. Completion of this phase signifies the "la
 #### 2.2 What IS NOT included in this phase
 * **Video Streaming:** This is a v2.0 feature.
 * **PsychoJS Web Preview:** This is a major feature, not a polish item (Phase 2 debt).
-* **Advanced Analytics:** The analytics page will be simple summaries. No complex charts, graphs, or statistical analysis.
+* **Advanced Analytics:** The analytics page will be simple summaries (AVG, COUNT). No complex charts, graphs, time-series analysis, or statistical analysis (ANOVA, t-tests).
 * **Agent Auto-Update:** This is a complex DevOps task deferred to v2.0 (Phase 3 debt).
 * **Redis-based WebSockets:** The in-memory `ConnectionManager` is "good enough" for v1.0 (Phase 4 debt).
 
@@ -152,16 +163,6 @@ This is the final phase of LICS v1.0. Completion of this phase signifies the "la
     * **`crud/crud_device.py` (MODIFY):**
         * `def get_orphaned(db: Session)`:
             * `return db.query(Device).filter(Device.status == "online", Device.last_seen < (datetime.utcnow() - timedelta(minutes=5))).all()`
-* **Backend: "Smart" CSV Export**
-    * **`api/routes/results.py` (MODIFY):**
-        * `GET /api/deployments/{id}/export/csv`:
-            * The logic must be rewritten to address the Phase 4 technical debt.
-            * 1. Fetch all `trial_results` for the deployment.
-            * 2. `response_keys = set()`, `custom_data_keys = set()`
-            * 3. Iterate results: `response_keys.update(trial.response.keys() if trial.response else [])`, `custom_data_keys.update(trial.custom_data.keys() if trial.custom_data else [])`.
-            * 4. `base_headers = ["trial_number", "started_at", "ended_at", "reaction_time", "correct"]`
-            * 5. `resp_headers = [f"response_{k}" for k in sorted(response_keys)]`
-            * 6. `custom_headers = [f"custom_{k}" for k in sorted(custom_data_keys)]`
             * 7. `all_headers = base_headers + resp_headers + custom_headers`
             * 8. `yield csv.writer.writerow(all_headers)`
             * 9. Loop through results again. For each `trial`:
@@ -268,7 +269,7 @@ This is the final phase of LICS v1.0. Completion of this phase signifies the "la
         3.  **Frontend:** Refactor the Builder page to use `next/dynamic` for the `CodePreview`.
         4.  **Testing:** Write the `E2E_TEST_PLAN.md` manual script.
         5.  **Testing:** Execute the E2E test plan ("test-a-thon"). Find, log, and fix all bugs.
-        6.  **Documentation:** Write the `USER_GUIDE.md`.
+        6.  **Documentation:** Write the `USER_GUIDE.md` and `OPERATIONS.md` (Runbooks).
     * **Expected Outputs:** A smooth, responsive UI. A bug-free E2E test run. A complete user guide.
     * **Checkpoints:** Does the Builder page load faster? Does the UI show spinners? Is the `USER_GUIDE.md` clear enough for a new user?
 
@@ -493,6 +494,16 @@ This is the final phase of LICS v1.0. Completion of this phase signifies the "la
             logger.info("Orphaned device sweep: No devices found.")
     ```
 * This is the *only* way to confirm the background task is running and working correctly.
+    
+#### 10.4 Maintenance & Operations (Runbooks)
+* **Database Backup:**
+    * Command: `docker-compose exec db pg_dump -U lics_user lics > backup_$(date +%F).sql`
+    * Restore: `cat backup.sql | docker-compose exec -T db psql -U lics_user lics`
+* **Log Management:**
+    * Docker logs can grow indefinitely.
+    * Mitigation: Configure `daemon.json` or `docker-compose.yml` with `logging: driver: "json-file", options: { "max-size": "10m", "max-file": "3" }`.
+* **Disk Space:**
+    * Alerting is out of scope, but the `OPERATIONS.md` should advise checking `df -h` monthly.
 
 ---
 
@@ -575,6 +586,7 @@ This is the final phase of LICS v1.0. Completion of this phase signifies the "la
 * [ ] `E2E_TEST_PLAN.md` is written and has been executed successfully.
 * [ ] All "show-stopper" bugs from E2E testing are fixed.
 * [ ] `USER_GUIDE.md` is written and reviewed for clarity.
+* [ ] `OPERATIONS.md` (Runbooks) is written, covering Backup, Logs, and Disk Space.
 * [ ] All code is reviewed, merged to `main`, and deployed.
 
 ---

@@ -188,6 +188,7 @@ NOT:
 
 * **Week 1 Objectives: Setup & Familiarization**
     * **Tasks:**
+        * **Technical Spike (CRITICAL):** Validate PsychoPy headless execution on target Raspberry Pi hardware. Ensure drivers and dependencies (e.g., OpenGL) function as expected before building dependent features.
         * Fork/clone the FastAPI template to the LICS root directory.
         * Get the stock-standard template running locally via `docker-compose up`.
         * Create the first superuser via `.env` variable.
@@ -195,8 +196,8 @@ NOT:
         * **Thoroughly read the template's code.** Understand its auth flow (`deps.py`), database setup (`db/session.py`, `models/user.py`), and configuration (`core/config.py`).
         * Add the `eclipse-mosquitto` service to `docker-compose.yml`.
         * Ensure proper project structure (template at root level, not in subdirectory).
-    * **Outputs:** A running, unmodified template; understanding of the codebase; proper directory structure.
-    * **Checkpoints:** Can you log in? Do you know where to add a new API router? Is the project structure correct?
+    * **Outputs:** A running, unmodified template; understanding of the codebase; proper directory structure; **Spike Report** confirming Pi compatibility.
+    * **Checkpoints:** Can you log in? Do you know where to add a new API router? Is the project structure correct? Does PsychoPy run on the Pi?
 
 * **Week 2 Objectives: Database Models & Migrations**
     * **Tasks:**
@@ -311,17 +312,28 @@ NOT:
         ]
         ```
 * **Endpoint:** `POST /api/devices/register`
-    * **Purpose:** Register a new edge device (e.g., Raspberry Pi) with the system. This endpoint is separate from the main `/api/devices` CRUD and may have simpler auth (e.g., a shared secret or no auth on internal network, TBD - **default to no auth for Phase 1 simplicity**).
-    * **Auth:** None (for now, relies on network isolation).
-    * **Request format:** `application/json`
-        ```json
-        {
-          "device_id": "b8:27:eb:xx:xx:xx",
-          "name": "Cage 01 Pi",
-          "location": "Cage 01",
-          "capabilities": { "screen": "1080p", "feeder": true, "rfid": false }
-        }
-        ```
+#### **2. Register Device**
+- **Endpoint:** `POST /api/devices/register`
+- **Auth:** Required (Shared Secret in Header: `Authorization: Bearer <REGISTRATION_SECRET>`)
+- **Description:** Registers a new device or updates an existing one.
+- **Request Body:**
+  ```json
+  {
+    "device_id": "mac-address-or-serial",
+    "name": "Cage 1 Pi",
+    "location": "Room 101",
+    "capabilities": { ... }
+  }
+  ```
+- **Response:**
+  ```json
+  {
+    "id": "uuid",
+    "status": "registered",
+    "api_key": "generated-device-key-for-future-auth" 
+  }
+  ```
+  > **Note:** The `api_key` returned here is for the device to use in Phase 3 for MQTT/API auth. The registration itself is protected by the `REGISTRATION_SECRET`.
     * **Response format:** `201 Created`
         ```json
         {
@@ -470,7 +482,9 @@ NOT:
 3.  Run `docker-compose exec backend alembic revision --autogenerate -m "Add experiment and device tables"`.
 4.  **Manually inspect** the generated script in `backend/alembic/versions/`.
 5.  Run `docker-compose exec backend alembic upgrade head` to apply.
-6.  **Rollback:** `docker-compose exec backend alembic downgrade -1`.
+6.  **Rollback:**
+    *   Command: `docker-compose exec backend alembic downgrade -1` (Reverts the last migration).
+    *   **WARNING:** Downgrading will **DROP** the `experiments` and `devices` tables. All data stored in these tables will be **PERMANENTLY LOST**. Ensure you have backups if this is done in a production-like environment.
 
 ### 7.3 Queries and Operations (Example CRUD)
 
@@ -619,10 +633,10 @@ NOT:
     POSTGRES_PORT=5432
     POSTGRES_DB=lics
     POSTGRES_USER=lics_user
-    POSTGRES_PASSWORD=secure_password
-    
-    # MQTT (NEW)
-    MQTT_BROKER=mqtt
+   - `POSTGRES_PASSWORD`: Database password
+- `SECRET_KEY`: For JWT generation
+- `REGISTRATION_SECRET`: Shared secret for device registration (Critical for security)
+- `ALLOWED_ORIGINS`: CORS settings
     MQTT_PORT=1883
     MQTT_USERNAME=lics_mqtt
     MQTT_PASSWORD=mqtt_password
@@ -738,6 +752,7 @@ NOT:
 * [x] MQTT broker running and accessible on ports 1883 and 9001.
 * [x] `Superuser` (from `.env`) can log in via the frontend.
 * [x] Template codebase thoroughly studied and documented.
+* [ ] **Hardware Spike:** PsychoPy verified running on Raspberry Pi (headless).
 
 **Week 2 (Database Models & Migrations) - IN PROGRESS:**
 * [ ] `docker-compose exec backend alembic current` shows the latest migration revision.
@@ -798,6 +813,75 @@ NOT:
    - Anonymous authentication (development mode)
    - MQTT and WebSocket listeners
    - Persistence and logging configuration
+
+---
+
+## Appendix A: JSON Schema Specifications
+
+### A.1 `psyexp_data` Schema
+This JSON structure represents the state of the PsychoPy Builder. It is stored in the `experiments` table.
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "builder_state": {
+      "type": "string",
+      "enum": ["initial", "modified", "saved"],
+      "description": "Current state of the builder session"
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "psychopy_version": { "type": "string" },
+        "author": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" }
+      }
+    },
+    "flow": {
+      "type": "array",
+      "description": "Ordered list of routines and loops defining the experiment flow",
+      "items": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["Routine", "LoopInitiator", "LoopTerminator"] },
+          "name": { "type": "string" },
+          "parameters": { "type": "object" }
+        },
+        "required": ["type", "name"]
+      }
+    },
+    "routines": {
+      "type": "object",
+      "description": "Dictionary of routines, where keys are routine names",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "type": { "type": "string", "enum": ["TextStim", "ImageStim", "Keyboard", "Code", "Sound"] },
+                "name": { "type": "string" },
+                "parameters": {
+                  "type": "object",
+                  "description": "Component-specific parameters (e.g., duration, text, image path)"
+                }
+              },
+              "required": ["type", "name", "parameters"]
+            }
+          }
+        },
+        "required": ["name", "components"]
+      }
+    }
+  },
+  "required": ["metadata", "flow", "routines"]
+}
+```
 10. ✅ Verified MQTT broker running successfully
 11. ✅ Reorganized directory structure (moved template to root level)
 

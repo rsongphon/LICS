@@ -12,6 +12,11 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
 * Implement a "Builder" UI using **React Flow** for the visual timeline/canvas.
 * Implement a **Component Palette** allowing users to drag-and-drop PsychoPy components (e.g., Text, Image, Keyboard Response) onto the canvas.
 * Implement a **Properties Panel** that allows users to configure the parameters of any selected component (e.g., text content, duration, allowed keys).
+> **CRITICAL SECURITY WARNING:**
+> The `ExperimentCompiler` is a high-risk component. It generates executable code.
+> 1. **Input Validation:** The `ExperimentValidator` must use strict allow-lists (regex) for all user inputs.
+> 2. **Sandboxing:** While Phase 2 runs this on the server, the generated code runs on the Pi. Ensure no server-side execution of user code happens here.
+> 3. **Complexity:** The translation from a Graph (React Flow) to a Linear Script (Python) is non-trivial. Handle "orphaned nodes" and "cycles" gracefully.
 * Implement a "Save" mechanism that serializes the React Flow state (nodes, edges, and properties) into a JSON object and saves it to the `experiments.psyexp_data` column via the `PUT /api/experiments/{id}` endpoint (built in Phase 1).
 * Implement a new backend API endpoint: `POST /api/experiments/{id}/compile`.
 * Implement a backend **Python Code Generation** module (e.g., `app/psychopy/compiler.py`) that reads the `psyexp_data` JSON, parses it, and uses **Jinja2** templates to generate a runnable PsychoPy Python script.
@@ -42,13 +47,15 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
 * The core component library (MVP: Text, Image, Keyboard, GPIO Output) must be implemented in the builder and compiler.
 
 #### 1.5 Estimated Timeline with Buffer Considerations
-* **Total:** 4 Weeks (as per Master Doc 16.2)
+* **Total:** 6 Weeks (Refined from Master Doc)
 * **Week 5:** Builder UI Shell & State Management
 * **Week 6:** Builder UI Interaction & Properties Panels
-* **Week 7:** Backend Compilation Engine (Jinja2)
-* **Week 8:** API Integration & Code Preview
-* **Buffer:** 1 Week. The primary risk is the complexity of replicating PsychoPy's logic. A 1-week buffer is allocated for potential refactors of the `compiler.py` module or the `psyexp_data` JSON structure.
-* **Total Allotted:** 5 Weeks
+* **Week 7:** Backend Compilation Engine (Jinja2) - Basic Structure
+* **Week 8:** Backend Compilation Engine (Jinja2) - Component Logic & Translation
+* **Week 9:** API Integration & Code Preview
+* **Week 10:** Testing, Refinement, and Security Review
+* **Buffer:** 1 Week.
+* **Total Allotted:** 7 Weeks
 
 #### 1.6 Key deliverables and artifacts
 * **Frontend Code:** New Next.js route: `frontend/src/app/(dashboard)/builder/[id]/page.tsx` and all associated components (Canvas, Palette, Properties).
@@ -67,10 +74,11 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
 * **Frontend Builder UI:**
     * A **React Flow** canvas for visual "routine" and "flow" management.
     * A **Component Palette** (sidebar) with draggable components.
-    * **MVP Components:**
+    * **MVP Components (Strictly Limited):**
         1.  **Stimuli:** `Text`, `Image`
         2.  **Responses:** `Keyboard`
         3.  **Hardware:** `GPIO Output` (for reward/trigger)
+        *   *Note: No other components (Sound, Mouse, etc.) are included in this phase.*
     * A **Properties Panel** (sidebar) that is context-aware, showing a form for the currently selected node.
     * A **Zustand** store to manage the complex state of the builder (nodes, edges, component properties).
     * **Save Button:** Triggers `PUT /api/experiments/{id}` with the `psyexp_data` from the Zustand store.
@@ -153,11 +161,16 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
         class ExperimentCompiler:
             def __init__(self):
                 self.template_env = Jinja2.Environment(
-                    loader=Jinja2.FileSystemLoader("app/psychopy/templates")
+                    loader=Jinja2.FileSystemLoader("app/psychopy/templates"),
+                    autoescape=True
                 )
+                self.validator = ExperimentValidator() # New Validator Class
 
             async def compile_experiment(self, db: AsyncSession, exp: models.Experiment) -> models.Experiment:
-                # 1. Parse the psyexp_data
+                # 1. Parse and Validate the psyexp_data
+                # STRICT VALIDATION: Check for malicious inputs and logical errors
+                self.validator.validate(exp.psyexp_data)
+                
                 builder_data = self.parse_builder_json(exp.psyexp_data)
                 
                 # 2. Get the main script template
@@ -166,8 +179,9 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
                 # 3. Render the template
                 # 'builder_data' will contain parsed routines, components, flow
                 python_code = template.render(
-                    experiment_name=exp.name,
-                    routines=builder_data.routines
+                    experiment_name=builder_data.name,
+                    routines=builder_data.routines,
+                    flow=builder_data.flow
                 )
                 
                 # 4. Update the experiment object
@@ -183,10 +197,23 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
                 # It transforms the React Flow nodes/edges into a
                 # logical structure of "Routines" and "Components"
                 # that the Jinja2 template can understand.
+                # It MUST also sanitize inputs.
                 ...
         
         compiler_service = ExperimentCompiler()
         ```
+
+    *   **Translation Logic (JSON -> Python):**
+        
+        | Component Type | JSON Property | Python Argument | Sanitization Rule |
+        | :--- | :--- | :--- | :--- |
+        | **Text** | `text` | `text="..."` | Escape quotes, remove non-printable chars. |
+        | **Text** | `duration` | `stop=...` | Ensure float >= 0. |
+        | **Text** | `pos_x`, `pos_y` | `pos=(x, y)` | Ensure floats. |
+        | **Image** | `image_path` | `image="..."` | Validate file extension, prevent path traversal. |
+        | **Keyboard** | `allowed_keys` | `keyList=[...]` | Allow only alphanumeric list. |
+        | **GPIO** | `pin` | `pin=...` | Validate against allowed GPIO pins (e.g., BCM numbering). |
+
     * **`templates/main_script.py.j2` (NEW):**
         ```jinja2
         # Auto-generated by LICS
@@ -341,21 +368,27 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
     * **Outputs:** An interactive builder where you can add/move nodes, edit text properties, and save the state to the DB.
     * **Checkpoints:** Can you drag a "Text" node, change its text to "Hello," save, refresh, and see "Hello" loaded from the API?
 
-* **Week 7 Objectives: Backend Compilation Engine**
+* **Week 7 Objectives: Backend Compilation Engine (Jinja2) - Basic Structure**
     * **Tasks:**
         1.  Create the `backend/app/psychopy/` module and `templates/` directory.
         2.  Install `jinja2`.
-        3.  Create `compiler.py`.
+        3.  Create `compiler.py` with the `ExperimentCompiler` class.
         4.  **Start with a unit test:** Write `tests/backend/app/psychopy/test_compiler.py`.
-        5.  Define a sample `psyexp_data` JSON (as in 3.2).
-        6.  Write the `parse_builder_json` function to transform this JSON into a Python object.
-        7.  Create `main_script.py.j2`. Start simple (just imports and a `print("Hello")`).
-        8.  Iterate: Get the test to pass by having `compiler_service.compile_experiment` read the JSON and generate the expected Python string.
-        9.  Expand the Jinja2 template to handle `Text` and `Keyboard` components.
-    * **Outputs:** A `compiler_service` that can be called and a `pytest` suite that proves it works.
-    * **Blockers:** The parsing logic and Jinja2 logic are complex. This week is 100% focused on this backend task.
+        5.  Define the Pydantic models for `ParsedExperiment`, `Routine`, `Component`.
+        6.  Implement `parse_builder_json` to handle just the basic structure (no components yet).
+        7.  Create `main_script.py.j2` with the skeleton (imports, window setup, main loop).
+    * **Outputs:** A compiler that can generate a "blank" experiment script.
 
-* **Week 8 Objectives: API Integration & Code Preview**
+* **Week 8 Objectives: Backend Compilation Engine (Jinja2) - Component Logic & Translation**
+    * **Tasks:**
+        1.  Implement translation logic for `Text` and `Image` components.
+        2.  Implement translation logic for `Keyboard` and `GPIO` components.
+        3.  Implement the **Sanitization Layer** within `parse_builder_json`.
+        4.  Expand `main_script.py.j2` to render these components.
+        5.  Verify generated code against valid PsychoPy scripts.
+    * **Outputs:** A compiler that generates full scripts for the MVP components.
+
+* **Week 9 Objectives: API Integration & Code Preview**
     * **Tasks:**
         1.  Add the `POST /api/experiments/{id}/compile` endpoint to `experiments.py`.
         2.  Inject `compiler_service` and call it. Add the authorization check (user ownership).
@@ -365,7 +398,14 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
         6.  On `mutation.onSuccess`, the `useQuery` for the experiment data should be *invalidated* (`queryClient.invalidateQueries(['experiment', id])`).
         7.  This refetch will update the `experiment.python_code` prop, which will automatically feed into the `CodePreview` component.
     * **Outputs:** A fully functional loop. User clicks "Compile," a spinner shows, and then the code preview panel updates with the new Python script.
-    * **Checkpoints:** Run the full E2E scenario from Success Criteria (1.1).
+
+* **Week 10 Objectives: Testing, Refinement, and Security Review**
+    * **Tasks:**
+        1.  Run full E2E manual tests.
+        2.  Perform a security review of the generated code (try to inject malicious strings).
+        3.  Refine the UI based on self-testing (e.g., improve drag-and-drop feel).
+        4.  Ensure all unit tests pass.
+    * **Outputs:** A stable, secure release candidate for Phase 2.
 
 ---
 
@@ -559,9 +599,16 @@ The primary goal is to create a Single Page Application (SPA) within our Next.js
         if experiment.created_by != current_user.id and not current_user.is_superuser:
             raise HTTPException(status_code=403, detail="Not authorized")
         ```
-* **Data Validation:**
-    * The `compiler.py` service must be robust. It must *not* crash if `psyexp_data` is malformed. It should use Pydantic models to parse the incoming JSON and raise validation errors (which become 500s) if the structure is wrong.
-    * **Jinja2 Templating:** We must use `autoescape=True` (or manually escape all inputs) in Jinja2 if we are rendering any user-provided strings into the Python code (e.g., `text="Hello"`). This prevents a user from typing `text="'); import os; os.system('rm -rf /'); #"` into the text field and creating a malicious script. This is a **critical** injection vector.
+* **Data Validation & Sanitization (CRITICAL):**
+    * **Sanitization Layer:** Before any data is passed to Jinja2, it must pass through a strict sanitization layer.
+        *   All string inputs (e.g., text content) must be escaped.
+        *   Numeric inputs must be validated as actual numbers.
+        *   Filenames must be validated against a whitelist of allowed characters.
+    * **Pydantic Models:** Use strict Pydantic models to parse `psyexp_data`. Any extra fields or malformed data should cause a validation error *before* compilation begins.
+    * **Jinja2 Security:**
+        *   Use `autoescape=True`.
+        *   Do not use `| safe` filter on user-provided content.
+        *   This prevents a user from typing `text="'); import os; os.system('rm -rf /'); #"` into the text field and creating a malicious script. This is a **critical** injection vector.
 
 ---
 
