@@ -23,9 +23,7 @@ import { Route as LayoutDevicesIndexRouteImport } from './routes/_layout/devices
 import { Route as LayoutExperimentsCreateRouteImport } from './routes/_layout/experiments/create'
 import { Route as LayoutDevicesRegisterRouteImport } from './routes/_layout/devices/register'
 import { Route as LayoutBuilderIdRouteImport } from './routes/_layout/builder/$id'
-import { Route as LayoutExperimentsIdEditRouteImport } from './routes/_layout/experiments/$id/edit'
 import { Route as LayoutExperimentsExperimentIdEditRouteImport } from './routes/_layout/experiments/$experimentId.edit'
-import { Route as LayoutDevicesIdDetailsRouteImport } from './routes/_layout/devices/$id/details'
 import { Route as LayoutDevicesDeviceIdDetailsRouteImport } from './routes/_layout/devices/$deviceId.details'
 
 const SignupRoute = SignupRouteImport.update({
@@ -97,22 +95,12 @@ const LayoutBuilderIdRoute = LayoutBuilderIdRouteImport.update({
   path: '/builder/$id',
   getParentRoute: () => LayoutRoute,
 } as any)
-const LayoutExperimentsIdEditRoute = LayoutExperimentsIdEditRouteImport.update({
-  id: '/experiments/$id/edit',
-  path: '/experiments/$id/edit',
-  getParentRoute: () => LayoutRoute,
-} as any)
 const LayoutExperimentsExperimentIdEditRoute =
   LayoutExperimentsExperimentIdEditRouteImport.update({
     id: '/experiments/$experimentId/edit',
     path: '/experiments/$experimentId/edit',
     getParentRoute: () => LayoutRoute,
   } as any)
-const LayoutDevicesIdDetailsRoute = LayoutDevicesIdDetailsRouteImport.update({
-  id: '/devices/$id/details',
-  path: '/devices/$id/details',
-  getParentRoute: () => LayoutRoute,
-} as any)
 const LayoutDevicesDeviceIdDetailsRoute =
   LayoutDevicesDeviceIdDetailsRouteImport.update({
     id: '/devices/$deviceId/details',
@@ -135,9 +123,7 @@ export interface FileRoutesByFullPath {
   '/devices': typeof LayoutDevicesIndexRoute
   '/experiments': typeof LayoutExperimentsIndexRoute
   '/devices/$deviceId/details': typeof LayoutDevicesDeviceIdDetailsRoute
-  '/devices/$id/details': typeof LayoutDevicesIdDetailsRoute
   '/experiments/$experimentId/edit': typeof LayoutExperimentsExperimentIdEditRoute
-  '/experiments/$id/edit': typeof LayoutExperimentsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
@@ -154,9 +140,7 @@ export interface FileRoutesByTo {
   '/devices': typeof LayoutDevicesIndexRoute
   '/experiments': typeof LayoutExperimentsIndexRoute
   '/devices/$deviceId/details': typeof LayoutDevicesDeviceIdDetailsRoute
-  '/devices/$id/details': typeof LayoutDevicesIdDetailsRoute
   '/experiments/$experimentId/edit': typeof LayoutExperimentsExperimentIdEditRoute
-  '/experiments/$id/edit': typeof LayoutExperimentsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -175,9 +159,7 @@ export interface FileRoutesById {
   '/_layout/devices/': typeof LayoutDevicesIndexRoute
   '/_layout/experiments/': typeof LayoutExperimentsIndexRoute
   '/_layout/devices/$deviceId/details': typeof LayoutDevicesDeviceIdDetailsRoute
-  '/_layout/devices/$id/details': typeof LayoutDevicesIdDetailsRoute
   '/_layout/experiments/$experimentId/edit': typeof LayoutExperimentsExperimentIdEditRoute
-  '/_layout/experiments/$id/edit': typeof LayoutExperimentsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -196,9 +178,7 @@ export interface FileRouteTypes {
     | '/devices'
     | '/experiments'
     | '/devices/$deviceId/details'
-    | '/devices/$id/details'
     | '/experiments/$experimentId/edit'
-    | '/experiments/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/login'
@@ -215,9 +195,7 @@ export interface FileRouteTypes {
     | '/devices'
     | '/experiments'
     | '/devices/$deviceId/details'
-    | '/devices/$id/details'
     | '/experiments/$experimentId/edit'
-    | '/experiments/$id/edit'
   id:
     | '__root__'
     | '/_layout'
@@ -235,9 +213,7 @@ export interface FileRouteTypes {
     | '/_layout/devices/'
     | '/_layout/experiments/'
     | '/_layout/devices/$deviceId/details'
-    | '/_layout/devices/$id/details'
     | '/_layout/experiments/$experimentId/edit'
-    | '/_layout/experiments/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -348,25 +324,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutBuilderIdRouteImport
       parentRoute: typeof LayoutRoute
     }
-    '/_layout/experiments/$id/edit': {
-      id: '/_layout/experiments/$id/edit'
-      path: '/experiments/$id/edit'
-      fullPath: '/experiments/$id/edit'
-      preLoaderRoute: typeof LayoutExperimentsIdEditRouteImport
-      parentRoute: typeof LayoutRoute
-    }
     '/_layout/experiments/$experimentId/edit': {
       id: '/_layout/experiments/$experimentId/edit'
       path: '/experiments/$experimentId/edit'
       fullPath: '/experiments/$experimentId/edit'
       preLoaderRoute: typeof LayoutExperimentsExperimentIdEditRouteImport
-      parentRoute: typeof LayoutRoute
-    }
-    '/_layout/devices/$id/details': {
-      id: '/_layout/devices/$id/details'
-      path: '/devices/$id/details'
-      fullPath: '/devices/$id/details'
-      preLoaderRoute: typeof LayoutDevicesIdDetailsRouteImport
       parentRoute: typeof LayoutRoute
     }
     '/_layout/devices/$deviceId/details': {
@@ -390,9 +352,7 @@ interface LayoutRouteChildren {
   LayoutDevicesIndexRoute: typeof LayoutDevicesIndexRoute
   LayoutExperimentsIndexRoute: typeof LayoutExperimentsIndexRoute
   LayoutDevicesDeviceIdDetailsRoute: typeof LayoutDevicesDeviceIdDetailsRoute
-  LayoutDevicesIdDetailsRoute: typeof LayoutDevicesIdDetailsRoute
   LayoutExperimentsExperimentIdEditRoute: typeof LayoutExperimentsExperimentIdEditRoute
-  LayoutExperimentsIdEditRoute: typeof LayoutExperimentsIdEditRoute
 }
 
 const LayoutRouteChildren: LayoutRouteChildren = {
@@ -406,10 +366,8 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutDevicesIndexRoute: LayoutDevicesIndexRoute,
   LayoutExperimentsIndexRoute: LayoutExperimentsIndexRoute,
   LayoutDevicesDeviceIdDetailsRoute: LayoutDevicesDeviceIdDetailsRoute,
-  LayoutDevicesIdDetailsRoute: LayoutDevicesIdDetailsRoute,
   LayoutExperimentsExperimentIdEditRoute:
     LayoutExperimentsExperimentIdEditRoute,
-  LayoutExperimentsIdEditRoute: LayoutExperimentsIdEditRoute,
 }
 
 const LayoutRouteWithChildren =
