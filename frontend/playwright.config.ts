@@ -32,7 +32,14 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    {
+      name: 'setup',
+      testMatch: /.*\.setup\.ts/,
+      use: {
+        // Increase timeout for setup project since login can take longer
+        actionTimeout: 90000,
+      },
+    },
 
     {
       name: 'chromium',

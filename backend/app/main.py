@@ -14,9 +14,18 @@ def custom_generate_unique_id(route: APIRoute) -> str:
 from contextlib import asynccontextmanager
 from app.core.mqtt import mqtt_client
 
+from app.core.mqtt_topics import MQTTTopics
+import logging
+
+logger = logging.getLogger(__name__)
+
+def log_mqtt_message(client, userdata, message):
+    logger.info(f"Received message on {message.topic}: {message.payload.decode()}")
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     mqtt_client.start()
+    mqtt_client.subscribe(MQTTTopics.ALL_DEVICE_STATUS, log_mqtt_message)
     yield
     mqtt_client.stop()
 

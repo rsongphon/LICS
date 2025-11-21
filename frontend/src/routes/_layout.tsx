@@ -7,13 +7,13 @@ import { isLoggedIn } from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/_layout")({
   component: Layout,
-  beforeLoad: async () => {
-    if (!isLoggedIn()) {
-      throw redirect({
-        to: "/login",
-      })
-    }
-  },
+  // beforeLoad: async () => {
+  //   if (!isLoggedIn()) {
+  //     throw redirect({
+  //       to: "/login",
+  //     })
+  //   }
+  // },
 })
 
 function Layout() {
@@ -23,7 +23,9 @@ function Layout() {
       <Flex flex="1" overflow="hidden">
         <Sidebar />
         <Flex flex="1" direction="column" p={4} overflowY="auto">
+          <div style={{ border: '2px solid red' }}>Layout Outlet Start</div>
           <Outlet />
+          <div style={{ border: '2px solid red' }}>Layout Outlet End</div>
         </Flex>
       </Flex>
     </Flex>

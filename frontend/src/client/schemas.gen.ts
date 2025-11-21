@@ -55,6 +55,525 @@ export const Body_login_login_access_tokenSchema = {
     title: 'Body_login-login_access_token'
 } as const;
 
+export const DevicePublicSchema = {
+    properties: {
+        device_id: {
+            type: 'string',
+            title: 'Device Id'
+        },
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        location: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Location'
+        },
+        status: {
+            '$ref': '#/components/schemas/DeviceStatus',
+            default: 'offline'
+        },
+        config: {
+            additionalProperties: true,
+            type: 'object',
+            title: 'Config'
+        },
+        capabilities: {
+            additionalProperties: true,
+            type: 'object',
+            title: 'Capabilities'
+        },
+        ip_address: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Ip Address'
+        },
+        last_seen: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Last Seen'
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        registered_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Registered At'
+        },
+        registered_by: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'uuid'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Registered By'
+        }
+    },
+    type: 'object',
+    required: ['device_id', 'name', 'id', 'registered_at', 'registered_by'],
+    title: 'DevicePublic'
+} as const;
+
+export const DeviceRegisterSchema = {
+    properties: {
+        device_id: {
+            type: 'string',
+            title: 'Device Id'
+        },
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        location: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Location'
+        },
+        capabilities: {
+            additionalProperties: true,
+            type: 'object',
+            title: 'Capabilities'
+        }
+    },
+    type: 'object',
+    required: ['device_id', 'name'],
+    title: 'DeviceRegister'
+} as const;
+
+export const DeviceStatusSchema = {
+    type: 'string',
+    enum: ['online', 'offline', 'running'],
+    title: 'DeviceStatus'
+} as const;
+
+export const DeviceUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        location: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Location'
+        },
+        status: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/DeviceStatus'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        config: {
+            anyOf: [
+                {
+                    additionalProperties: true,
+                    type: 'object'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Config'
+        },
+        capabilities: {
+            anyOf: [
+                {
+                    additionalProperties: true,
+                    type: 'object'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Capabilities'
+        },
+        ip_address: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Ip Address'
+        },
+        last_seen: {
+            anyOf: [
+                {
+                    type: 'string',
+                    format: 'date-time'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Last Seen'
+        }
+    },
+    type: 'object',
+    title: 'DeviceUpdate'
+} as const;
+
+export const DevicesPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/DevicePublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'DevicesPublic'
+} as const;
+
+export const ExperimentCreateSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        psyexp_data: {
+            additionalProperties: true,
+            type: 'object',
+            title: 'Psyexp Data'
+        },
+        python_code: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Python Code'
+        },
+        psychojs_code: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Psychojs Code'
+        },
+        version: {
+            type: 'integer',
+            title: 'Version',
+            default: 1
+        },
+        status: {
+            '$ref': '#/components/schemas/ExperimentStatus',
+            default: 'draft'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            default: true
+        }
+    },
+    type: 'object',
+    required: ['name'],
+    title: 'ExperimentCreate'
+} as const;
+
+export const ExperimentPublicSchema = {
+    properties: {
+        name: {
+            type: 'string',
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        psyexp_data: {
+            additionalProperties: true,
+            type: 'object',
+            title: 'Psyexp Data'
+        },
+        python_code: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Python Code'
+        },
+        psychojs_code: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Psychojs Code'
+        },
+        version: {
+            type: 'integer',
+            title: 'Version',
+            default: 1
+        },
+        status: {
+            '$ref': '#/components/schemas/ExperimentStatus',
+            default: 'draft'
+        },
+        is_active: {
+            type: 'boolean',
+            title: 'Is Active',
+            default: true
+        },
+        id: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Id'
+        },
+        created_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Created At'
+        },
+        updated_at: {
+            type: 'string',
+            format: 'date-time',
+            title: 'Updated At'
+        },
+        created_by: {
+            type: 'string',
+            format: 'uuid',
+            title: 'Created By'
+        }
+    },
+    type: 'object',
+    required: ['name', 'id', 'created_at', 'updated_at', 'created_by'],
+    title: 'ExperimentPublic'
+} as const;
+
+export const ExperimentStatusSchema = {
+    type: 'string',
+    enum: ['draft', 'compiled', 'deployed'],
+    title: 'ExperimentStatus'
+} as const;
+
+export const ExperimentUpdateSchema = {
+    properties: {
+        name: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Name'
+        },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
+        psyexp_data: {
+            anyOf: [
+                {
+                    additionalProperties: true,
+                    type: 'object'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Psyexp Data'
+        },
+        python_code: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Python Code'
+        },
+        psychojs_code: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Psychojs Code'
+        },
+        version: {
+            anyOf: [
+                {
+                    type: 'integer'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Version'
+        },
+        status: {
+            anyOf: [
+                {
+                    '$ref': '#/components/schemas/ExperimentStatus'
+                },
+                {
+                    type: 'null'
+                }
+            ]
+        },
+        is_active: {
+            anyOf: [
+                {
+                    type: 'boolean'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Is Active'
+        }
+    },
+    type: 'object',
+    title: 'ExperimentUpdate'
+} as const;
+
+export const ExperimentsPublicSchema = {
+    properties: {
+        data: {
+            items: {
+                '$ref': '#/components/schemas/ExperimentPublic'
+            },
+            type: 'array',
+            title: 'Data'
+        },
+        count: {
+            type: 'integer',
+            title: 'Count'
+        }
+    },
+    type: 'object',
+    required: ['data', 'count'],
+    title: 'ExperimentsPublic'
+} as const;
+
 export const HTTPValidationErrorSchema = {
     properties: {
         detail: {

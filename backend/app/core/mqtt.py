@@ -52,4 +52,12 @@ class MQTTClient:
         else:
             logger.warning("MQTT client not initialized, cannot publish")
 
+    def subscribe(self, topic: str, callback):
+        if self.client:
+            self.client.subscribe(topic)
+            self.client.message_callback_add(topic, callback)
+            logger.info(f"Subscribed to {topic}")
+        else:
+            logger.warning("MQTT client not initialized, cannot subscribe")
+
 mqtt_client = MQTTClient()

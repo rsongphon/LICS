@@ -9,6 +9,106 @@ export type Body_login_login_access_token = {
     client_secret?: (string | null);
 };
 
+export type DevicePublic = {
+    device_id: string;
+    name: string;
+    description?: (string | null);
+    location?: (string | null);
+    status?: DeviceStatus;
+    config?: {
+        [key: string]: unknown;
+    };
+    capabilities?: {
+        [key: string]: unknown;
+    };
+    ip_address?: (string | null);
+    last_seen?: (string | null);
+    id: string;
+    registered_at: string;
+    registered_by: (string | null);
+};
+
+export type DeviceRegister = {
+    device_id: string;
+    name: string;
+    location?: (string | null);
+    capabilities?: {
+        [key: string]: unknown;
+    };
+};
+
+export type DevicesPublic = {
+    data: Array<DevicePublic>;
+    count: number;
+};
+
+export type DeviceStatus = 'online' | 'offline' | 'running';
+
+export type DeviceUpdate = {
+    name?: (string | null);
+    description?: (string | null);
+    location?: (string | null);
+    status?: (DeviceStatus | null);
+    config?: ({
+    [key: string]: unknown;
+} | null);
+    capabilities?: ({
+    [key: string]: unknown;
+} | null);
+    ip_address?: (string | null);
+    last_seen?: (string | null);
+};
+
+export type ExperimentCreate = {
+    name: string;
+    description?: (string | null);
+    psyexp_data?: {
+        [key: string]: unknown;
+    };
+    python_code?: (string | null);
+    psychojs_code?: (string | null);
+    version?: number;
+    status?: ExperimentStatus;
+    is_active?: boolean;
+};
+
+export type ExperimentPublic = {
+    name: string;
+    description?: (string | null);
+    psyexp_data?: {
+        [key: string]: unknown;
+    };
+    python_code?: (string | null);
+    psychojs_code?: (string | null);
+    version?: number;
+    status?: ExperimentStatus;
+    is_active?: boolean;
+    id: string;
+    created_at: string;
+    updated_at: string;
+    created_by: string;
+};
+
+export type ExperimentsPublic = {
+    data: Array<ExperimentPublic>;
+    count: number;
+};
+
+export type ExperimentStatus = 'draft' | 'compiled' | 'deployed';
+
+export type ExperimentUpdate = {
+    name?: (string | null);
+    description?: (string | null);
+    psyexp_data?: ({
+    [key: string]: unknown;
+} | null);
+    python_code?: (string | null);
+    psychojs_code?: (string | null);
+    version?: (number | null);
+    status?: (ExperimentStatus | null);
+    is_active?: (boolean | null);
+};
+
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
 };
@@ -106,6 +206,70 @@ export type ValidationError = {
     msg: string;
     type: string;
 };
+
+export type DevicesReadDevicesData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type DevicesReadDevicesResponse = (DevicesPublic);
+
+export type DevicesRegisterDeviceData = {
+    requestBody: DeviceRegister;
+};
+
+export type DevicesRegisterDeviceResponse = (DevicePublic);
+
+export type DevicesReadDeviceData = {
+    id: string;
+};
+
+export type DevicesReadDeviceResponse = (DevicePublic);
+
+export type DevicesUpdateDeviceData = {
+    id: string;
+    requestBody: DeviceUpdate;
+};
+
+export type DevicesUpdateDeviceResponse = (DevicePublic);
+
+export type DevicesDeleteDeviceData = {
+    id: string;
+};
+
+export type DevicesDeleteDeviceResponse = (DevicePublic);
+
+export type ExperimentsReadExperimentsData = {
+    limit?: number;
+    skip?: number;
+};
+
+export type ExperimentsReadExperimentsResponse = (ExperimentsPublic);
+
+export type ExperimentsCreateExperimentData = {
+    requestBody: ExperimentCreate;
+};
+
+export type ExperimentsCreateExperimentResponse = (ExperimentPublic);
+
+export type ExperimentsReadExperimentData = {
+    id: string;
+};
+
+export type ExperimentsReadExperimentResponse = (ExperimentPublic);
+
+export type ExperimentsUpdateExperimentData = {
+    id: string;
+    requestBody: ExperimentUpdate;
+};
+
+export type ExperimentsUpdateExperimentResponse = (ExperimentPublic);
+
+export type ExperimentsDeleteExperimentData = {
+    id: string;
+};
+
+export type ExperimentsDeleteExperimentResponse = (ExperimentPublic);
 
 export type ItemsReadItemsData = {
     limit?: number;
