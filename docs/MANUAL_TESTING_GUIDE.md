@@ -324,7 +324,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Top toolbar with "Save" and "Compile" buttons
 - ✅ Two tabs: "Builder" and "Code Preview"
 
-**Pass/Fail:** ✅ Pass (Fixed: Resolved module loading error by correcting ExperimentsService import)
+**Pass/Fail:** ✅ Pass 
 ---
 
 ### 2.2 Component Palette
@@ -342,7 +342,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Each component has icon/label
 - ✅ Components are draggable
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass (Fixed: Resolved module loading error by correcting ExperimentsService import)
 
 ---
 
@@ -359,7 +359,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Node is movable
 - ✅ Node is selectable (click to select)
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass 
 
 ---
 
@@ -373,7 +373,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Node labeled "Keyboard" or similar
 - ✅ Both nodes visible on canvas
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass 
 
 ---
 
@@ -385,7 +385,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Image node appears
 - ✅ Labeled appropriately
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass 
 
 ---
 
@@ -397,7 +397,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ GPIO node appears
 - ✅ Labeled appropriately
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass 
 
 ---
 
@@ -411,7 +411,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Position updates
 - ✅ Node stays where dropped
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass 
 
 ---
 
@@ -426,7 +426,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Connection stored in state
 - ✅ Visual line drawn on canvas
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass 
 
 **Note:** Edge functionality may be limited in current MVP version.
 
@@ -441,7 +441,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Node removed from canvas
 - ✅ Connected edges also removed
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -459,8 +459,9 @@ This document provides comprehensive manual testing procedures for all features 
   - **Position X** (number input)
   - **Position Y** (number input)
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass (Fixed: Position X/Y now update in real-time when dragging nodes)
 
+**Notes:** Position synchronization was fixed by adding a `useEffect` hook in `TextPropertiesForm.tsx` that watches for node position changes and updates the form fields accordingly.
 ---
 
 #### Test 2.4.2: Edit Text Properties

@@ -61,6 +61,21 @@ export const TextPropertiesForm = ({ node }: { node: Node }) => {
     }
   }, [node.id, node.data.text, node.data.duration, node.position.x, node.position.y, setValue])
 
+  // Update form position fields when the node is dragged (position changes for the same node)
+  useEffect(() => {
+    // Only update if we're looking at the same node and position has actually changed
+    if (previousNodeIdRef.current === node.id) {
+      const currentX = watch("x")
+      const currentY = watch("y")
+
+      // Only update if the position has actually changed to avoid unnecessary updates
+      if (currentX !== node.position.x || currentY !== node.position.y) {
+        setValue("x", node.position.x)
+        setValue("y", node.position.y)
+      }
+    }
+  }, [node.position.x, node.position.y, node.id, setValue, watch])
+
 
   return (
     <VStack gap={4} align="stretch">
