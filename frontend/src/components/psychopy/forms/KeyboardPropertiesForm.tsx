@@ -1,5 +1,5 @@
 import { Input, VStack } from "@chakra-ui/react"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import type { Node } from "reactflow"
 import { useBuilderStore } from "../../../stores/BuilderStore"
@@ -24,20 +24,30 @@ export const KeyboardPropertiesForm = ({ node }: { node: Node }) => {
     },
   })
 
+  // Track the current node ID to detect when selection changes
+  const previousNodeIdRef = useRef(node.id)
+
   // Watch for changes and update store
   const values = watch()
 
   useEffect(() => {
-    setNodeProps(node.id, values)
+    // Only update store if this is the same node (user is editing)
+    // Skip updates during initial load or when switching nodes
+    if (previousNodeIdRef.current === node.id) {
+      setNodeProps(node.id, values)
+    }
   }, [node.id, setNodeProps, values])
 
-  // Update form if node selection changes
+  // Update form when node selection changes to a different node
   useEffect(() => {
-    setValue("allowed_keys", node.data.allowed_keys || "space")
-    setValue("duration", node.data.duration || 0)
-    setValue("store_correct", node.data.store_correct || false)
-    setValue("correct_answer", node.data.correct_answer || "")
-  }, [setValue, node.data])
+    if (previousNodeIdRef.current !== node.id) {
+      setValue("allowed_keys", node.data.allowed_keys || "space")
+      setValue("duration", node.data.duration || 0)
+      setValue("store_correct", node.data.store_correct || false)
+      setValue("correct_answer", node.data.correct_answer || "")
+      previousNodeIdRef.current = node.id
+    }
+  }, [setValue, node.id, node.data.allowed_keys, node.data.duration, node.data.store_correct, node.data.correct_answer])
 
   return (
     <VStack gap={4} align="stretch">

@@ -1,5 +1,5 @@
 import { Input, VStack } from "@chakra-ui/react"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useForm } from "react-hook-form"
 import type { Node } from "reactflow"
 import { useBuilderStore } from "../../../stores/BuilderStore"
@@ -23,20 +23,30 @@ export const TextPropertiesForm = ({ node }: { node: Node }) => {
     },
   })
 
+  // Track the current node ID to detect when selection changes
+  const previousNodeIdRef = useRef(node.id)
+
   // Watch for changes and update store
   const values = watch()
 
   useEffect(() => {
-    setNodeProps(node.id, values)
+    // Only update store if this is the same node (user is editing)
+    // Skip updates during initial load or when switching nodes
+    if (previousNodeIdRef.current === node.id) {
+      setNodeProps(node.id, values)
+    }
   }, [node.id, setNodeProps, values])
 
-  // Update form if node selection changes to a different node (but same type)
+  // Update form when node selection changes to a different node
   useEffect(() => {
-    setValue("text", node.data.text || "Hello World")
-    setValue("duration", node.data.duration || 1.0)
-    setValue("x", node.position.x)
-    setValue("y", node.position.y)
-  }, [setValue, node.data, node.position])
+    if (previousNodeIdRef.current !== node.id) {
+      setValue("text", node.data.text || "Hello World")
+      setValue("duration", node.data.duration || 1.0)
+      setValue("x", node.position.x)
+      setValue("y", node.position.y)
+      previousNodeIdRef.current = node.id
+    }
+  }, [setValue, node.id, node.data.text, node.data.duration, node.position.x, node.position.y])
 
   return (
     <VStack gap={4} align="stretch">

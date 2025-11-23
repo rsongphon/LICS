@@ -10,13 +10,12 @@ import {
 } from "@chakra-ui/react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute } from "@tanstack/react-router"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { DndProvider } from "react-dnd"
 import { HTML5Backend } from "react-dnd-html5-backend"
 import { FaPlay, FaSave } from "react-icons/fa"
 
 import { ExperimentsService } from "../../../client"
-import { CustomExperimentsService } from "../../../client/services/CustomExperimentsService"
 import BuilderCanvas from "../../../components/psychopy/BuilderCanvas"
 import CodePreview from "../../../components/psychopy/CodePreview"
 import ComponentPalette from "../../../components/psychopy/ComponentPalette"
@@ -33,6 +32,9 @@ function BuilderPage() {
   const queryClient = useQueryClient()
   const { nodes, edges, componentProps, setExperimentData } = useBuilderStore()
 
+  // Track if we've loaded this experiment's data
+  const loadedExperimentIdRef = useRef<string | null>(null)
+
   const {
     data: experiment,
     isLoading,
@@ -43,10 +45,12 @@ function BuilderPage() {
   })
 
   useEffect(() => {
-    if (experiment?.psyexp_data) {
+    // Only load experiment data once per experiment, or when switching to a different experiment
+    if (experiment?.psyexp_data && loadedExperimentIdRef.current !== id) {
       setExperimentData(experiment.psyexp_data)
+      loadedExperimentIdRef.current = id
     }
-  }, [experiment, setExperimentData])
+  }, [experiment?.psyexp_data, id, setExperimentData])
 
   const saveMutation = useMutation({
     mutationFn: (data: any) =>
@@ -72,7 +76,7 @@ function BuilderPage() {
   })
 
   const compileMutation = useMutation({
-    mutationFn: () => CustomExperimentsService.compileExperiment({ id }),
+    mutationFn: () => ExperimentsService.compileExperiment({ id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["experiment", id] })
       toaster.create({
