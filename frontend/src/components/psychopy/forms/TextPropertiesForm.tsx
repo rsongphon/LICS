@@ -14,7 +14,7 @@ interface TextProperties {
 
 export const TextPropertiesForm = ({ node }: { node: Node }) => {
     const { setNodeProps } = useBuilderStore()
-    const { register, handleSubmit, watch, setValue } = useForm<TextProperties>({
+    const { register, watch, setValue } = useForm<TextProperties>({
         defaultValues: {
             text: node.data.text || "Hello World",
             duration: node.data.duration || 1.0,

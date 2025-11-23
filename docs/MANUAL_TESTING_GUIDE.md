@@ -47,7 +47,12 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Cannot access protected routes (e.g., `/experiments`)
 - ✅ Session cleared
 
-**Pass/Fail:** ✅ Pass
+**Pass/Fail:** ✅ Pass (Fixed: Enabled beforeLoad guard in _layout.tsx and enhanced logout to clear cache)
+
+**Notes:**
+- Route protection guard now active in `/frontend/src/routes/_layout.tsx`
+- Logout function clears React Query cache via `queryClient.clear()`
+- Frontend rebuild required: `docker-compose build frontend && docker-compose up -d frontend`
 
 ---
 
@@ -60,7 +65,9 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Redirected to login page
 - ✅ Cannot view experiments without authentication
 
-**Pass/Fail:** ✅ Pass
+**Pass/Fail:** ✅ Pass (Fixed: beforeLoad guard prevents unauthenticated route access)
+
+**Notes:** Same fix as Test 1.1.2 - route guard now prevents access before rendering protected content
 
 ---
 

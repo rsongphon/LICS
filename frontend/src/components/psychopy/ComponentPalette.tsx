@@ -54,7 +54,7 @@ const ComponentPalette = () => {
             <Text fontSize="lg" fontWeight="bold" mb={4}>
                 Components
             </Text>
-            <VStack spacing={3} align="stretch">
+            <VStack gap={3} align="stretch">
                 <Text
                     fontSize="xs"
                     color="gray.500"

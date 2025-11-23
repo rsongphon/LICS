@@ -15,7 +15,7 @@ interface KeyboardProperties {
 
 export const KeyboardPropertiesForm = ({ node }: { node: Node }) => {
     const { setNodeProps } = useBuilderStore()
-    const { register, handleSubmit, watch, setValue } =
+    const { register, watch, setValue } =
         useForm<KeyboardProperties>({
             defaultValues: {
                 allowed_keys: node.data.allowed_keys || "space",

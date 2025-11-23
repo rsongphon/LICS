@@ -1,6 +1,6 @@
 import { act } from "@testing-library/react"
 import { beforeEach, describe, expect, it } from "vitest"
-import { useBuilderStore } from "../stores/BuilderStore"
+import { useBuilderStore } from "../BuilderStore"
 
 describe("BuilderStore", () => {
     beforeEach(() => {
