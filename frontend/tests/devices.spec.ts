@@ -14,7 +14,9 @@ test.describe("Devices List Page", () => {
     await expect(page.getByRole("heading", { name: "Devices" })).toBeVisible()
 
     // Check that Register Device button is visible
-    await expect(page.getByRole("link", { name: "Register Device" })).toBeVisible()
+    await expect(
+      page.getByRole("link", { name: "Register Device" }),
+    ).toBeVisible()
   })
 
   test("Devices table is visible with correct columns", async ({ page }) => {
@@ -25,24 +27,42 @@ test.describe("Devices List Page", () => {
     await page.waitForLoadState("networkidle")
 
     // Check for table or empty state
-    const tableVisible = await page.getByRole("table").isVisible().catch(() => false)
-    const emptyStateVisible = await page.getByText("No devices found").isVisible().catch(() => false)
+    const tableVisible = await page
+      .getByRole("table")
+      .isVisible()
+      .catch(() => false)
+    const emptyStateVisible = await page
+      .getByText("No devices found")
+      .isVisible()
+      .catch(() => false)
 
     // At least one should be visible
     expect(tableVisible || emptyStateVisible).toBe(true)
 
     // If table is visible, check column headers
     if (tableVisible) {
-      await expect(page.getByRole("columnheader", { name: "Name" })).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Name" }),
+      ).toBeVisible()
       // Note: Looking for "Status" column
-      await expect(page.getByRole("columnheader", { name: "Status" })).toBeVisible()
-      await expect(page.getByRole("columnheader", { name: "Location" })).toBeVisible()
-      await expect(page.getByRole("columnheader", { name: "Last Seen" })).toBeVisible()
-      await expect(page.getByRole("columnheader", { name: "Actions" })).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Status" }),
+      ).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Location" }),
+      ).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Last Seen" }),
+      ).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Actions" }),
+      ).toBeVisible()
     }
   })
 
-  test("Register Device button navigates to register page", async ({ page }) => {
+  test("Register Device button navigates to register page", async ({
+    page,
+  }) => {
     await page.goto("/devices")
 
     await page.getByRole("link", { name: "Register Device" }).click()
@@ -57,7 +77,9 @@ test.describe("Register Device", () => {
     await page.goto("/devices/register")
 
     // Check heading
-    await expect(page.getByRole("heading", { name: "Register Device" })).toBeVisible()
+    await expect(
+      page.getByRole("heading", { name: "Register Device" }),
+    ).toBeVisible()
 
     // Check form fields are visible
     await expect(page.getByLabel("Device ID")).toBeVisible()
@@ -134,7 +156,9 @@ test.describe("Register Device", () => {
     await page.getByRole("button", { name: "Register" }).click()
 
     // Should show error message
-    await expect(page.getByText(/already exists|already registered/i)).toBeVisible()
+    await expect(
+      page.getByText(/already exists|already registered/i),
+    ).toBeVisible()
   })
 
   test("Cancel button returns to devices list", async ({ page }) => {
@@ -300,7 +324,9 @@ test.describe("Devices List Features", () => {
     await page.goto("/devices")
 
     // Click on dashboard/home link
-    const homeLink = page.getByRole("link", { name: "Dashboard" }).or(page.getByRole("link", { name: "Home" }))
+    const homeLink = page
+      .getByRole("link", { name: "Dashboard" })
+      .or(page.getByRole("link", { name: "Home" }))
 
     if (await homeLink.isVisible()) {
       await homeLink.click()

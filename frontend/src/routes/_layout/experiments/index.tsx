@@ -1,20 +1,28 @@
-import { Container, Heading, Table, Button, Flex, Spinner, Text } from "@chakra-ui/react"
+import {
+    Button,
+    Container,
+    Flex,
+    Heading,
+    Spinner,
+    Table,
+    Text,
+} from "@chakra-ui/react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { FiPlus, FiTrash2 } from "react-icons/fi"
+import { type ExperimentPublic, ExperimentsService } from "@/client"
 import {
-    DialogBody,
     DialogActionTrigger,
+    DialogBody,
+    DialogCloseTrigger,
     DialogContent,
     DialogFooter,
     DialogHeader,
     DialogRoot,
     DialogTitle,
     DialogTrigger,
-    DialogCloseTrigger,
 } from "@/components/ui/dialog"
 import { toaster } from "@/components/ui/toaster"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { ExperimentsService, type ExperimentPublic } from "@/client"
 
 export const Route = createFileRoute("/_layout/experiments/")({
     component: Experiments,
@@ -42,10 +50,15 @@ function Experiments() {
                 description: err.message,
                 type: "error",
             })
-        }
+        },
     })
 
-    if (isLoading) return <Flex justify="center" p={10}><Spinner /></Flex>
+    if (isLoading)
+        return (
+            <Flex justify="center" p={10}>
+                <Spinner />
+            </Flex>
+        )
     if (error) return <Text color="red.500">Error loading experiments</Text>
 
     return (
@@ -54,33 +67,48 @@ function Experiments() {
                 <Heading size="lg">Experiments</Heading>
                 <Button asChild colorPalette="blue">
                     <Link to="/experiments/create">
-                        <FiPlus style={{ marginRight: '8px' }} /> Add Experiment
+                        <FiPlus style={{ marginRight: "8px" }} /> Add Experiment
                     </Link>
                 </Button>
             </Flex>
 
             {data?.data.length === 0 ? (
-                <Text>No experiments found. Create your first experiment to get started.</Text>
+                <Text>
+                    No experiments found. Create your first experiment to get started.
+                </Text>
             ) : (
                 <Table.Root>
                     <Table.Header>
                         <Table.Row>
                             <Table.ColumnHeader role="columnheader">Name</Table.ColumnHeader>
-                            <Table.ColumnHeader role="columnheader">Description</Table.ColumnHeader>
-                            <Table.ColumnHeader role="columnheader">Created At</Table.ColumnHeader>
-                            <Table.ColumnHeader role="columnheader">Actions</Table.ColumnHeader>
+                            <Table.ColumnHeader role="columnheader">
+                                Description
+                            </Table.ColumnHeader>
+                            <Table.ColumnHeader role="columnheader">
+                                Created At
+                            </Table.ColumnHeader>
+                            <Table.ColumnHeader role="columnheader">
+                                Actions
+                            </Table.ColumnHeader>
                         </Table.Row>
                     </Table.Header>
                     <Table.Body>
                         {data?.data.map((experiment: ExperimentPublic) => (
                             <Table.Row key={experiment.id}>
                                 <Table.Cell>{experiment.name}</Table.Cell>
-                                <Table.Cell>{experiment.description || '-'}</Table.Cell>
-                                <Table.Cell>{new Date(experiment.created_at).toLocaleDateString()}</Table.Cell>
+                                <Table.Cell>{experiment.description || "-"}</Table.Cell>
+                                <Table.Cell>
+                                    {new Date(experiment.created_at).toLocaleDateString()}
+                                </Table.Cell>
                                 <Table.Cell>
                                     <Flex gap={2}>
                                         <Button asChild size="sm" variant="outline">
-                                            <Link to="/experiments/$experimentId/edit" params={{ experimentId: experiment.id }}>Edit</Link>
+                                            <Link
+                                                to="/experiments/$experimentId/edit"
+                                                params={{ experimentId: experiment.id }}
+                                            >
+                                                Edit
+                                            </Link>
                                         </Button>
                                         <DialogRoot>
                                             <DialogTrigger asChild>
@@ -93,7 +121,8 @@ function Experiments() {
                                                     <DialogTitle>Delete Experiment</DialogTitle>
                                                 </DialogHeader>
                                                 <DialogBody>
-                                                    Are you sure you want to delete this experiment? This action cannot be undone.
+                                                    Are you sure you want to delete this experiment? This
+                                                    action cannot be undone.
                                                 </DialogBody>
                                                 <DialogFooter>
                                                     <DialogActionTrigger asChild>
@@ -102,7 +131,9 @@ function Experiments() {
                                                     <DialogActionTrigger asChild>
                                                         <Button
                                                             colorPalette="red"
-                                                            onClick={() => deleteMutation.mutate(experiment.id)}
+                                                            onClick={() =>
+                                                                deleteMutation.mutate(experiment.id)
+                                                            }
                                                         >
                                                             Delete
                                                         </Button>

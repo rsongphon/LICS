@@ -1,0 +1,69 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+"""
+This experiment was created using LICS (Lighthouse Integrated Control System)
+"""
+
+from psychopy import locale_setup
+from psychopy import prefs
+from psychopy import sound, gui, visual, core, data, event, logging, clock, colors, layout
+from psychopy.constants import (NOT_STARTED, STARTED, PLAYING, PAUSED,
+                                STOPPED, FINISHED, PRESSED, RELEASED, FOREVER)
+
+import numpy as np
+from numpy import (sin, cos, tan, log, log10, pi, average,
+                   sqrt, std, deg2rad, rad2deg, linspace, asarray)
+from numpy.random import random, randint, normal, shuffle, choice as randchoice
+import os
+import sys
+import time
+
+# Ensure that relative paths start from the same directory as this script
+_thisDir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(_thisDir)
+
+# Store info about the experiment session
+psychopyVersion = '2023.1.0'
+expName = '{{ expName }}'  # from the Builder filename that created this script
+expInfo = {
+    'participant': f"{randint(0, 999999):06.0f}",
+    'session': '001',
+}
+
+# --- Setup the Window ---
+win = visual.Window(
+    size=[1024, 768], fullscr=True, screen=0, 
+    winType='pyglet', allowStencil=False,
+    monitor='testMonitor', color=[0,0,0], colorSpace='rgb',
+    blendMode='avg', useFBO=True, 
+    units='height')
+win.mouseVisible = False
+
+# --- Setup the Experiment ---
+# Initialize components for Routine "trial"
+trialClock = core.Clock()
+
+{% for code in components_code %}
+{{ code }}
+{% endfor %}
+
+# Create some handy timers
+globalClock = core.Clock()  # to track the time since experiment started
+routineTimer = core.Clock()  # to track time remaining of each (possibly non-slip) routine 
+defaultKeyboard = event.Keyboard(backend='ptb')  # initialize a default keyboard
+
+# --- Main Loop ---
+# For now, just a placeholder loop
+running = True
+while running:
+    # Check for quit (typically the Esc key)
+    if defaultKeyboard.getKeys(keyList=["escape"]):
+        core.quit()
+    
+    # Flip the window
+    win.flip()
+
+# End of experiment
+win.close()
+core.quit()

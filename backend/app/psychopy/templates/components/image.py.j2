@@ -1,0 +1,9 @@
+# --- Initialize components for {{ node.data.label }} ---
+{{ node.data.label }} = visual.ImageStim(
+    win=win,
+    name={{ node.data.label | python_val }}, 
+    image={{ props.image | default("sin") | python_val }}, mask=None, anchor='center',
+    ori=0.0, pos=({{ props.x | default(0) | float }}, {{ props.y | default(0) | float }}), size=(0.5, 0.5),
+    color=[1,1,1], colorSpace='rgb', opacity=None,
+    flipHoriz=False, flipVert=False,
+    texRes=128.0, interpolate=True, depth=0.0)

@@ -119,3 +119,35 @@ def delete_experiment(
         raise HTTPException(status_code=400, detail="Not enough permissions")
     experiment = crud.delete_experiment(session=session, db_experiment=experiment)
     return experiment
+
+
+from app.psychopy.compiler import compiler
+
+@router.post("/{id}/compile", response_model=ExperimentPublic)
+def compile_experiment(
+    *,
+    session: Session = Depends(deps.get_db),
+    id: uuid.UUID,
+    current_user: User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Compile experiment to Python code.
+    """
+    experiment = crud.get_experiment(session=session, experiment_id=id)
+    if not experiment:
+        raise HTTPException(status_code=404, detail="Experiment not found")
+    if not current_user.is_superuser and (experiment.created_by != current_user.id):
+        raise HTTPException(status_code=400, detail="Not enough permissions")
+    
+    # Compile
+    try:
+        python_code = compiler.compile(experiment.name, experiment.psyexp_data or {})
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Compilation failed: {str(e)}")
+    
+    # Save
+    experiment_update = ExperimentUpdate(python_code=python_code)
+    experiment = crud.update_experiment(
+        session=session, db_experiment=experiment, experiment_in=experiment_update
+    )
+    return experiment

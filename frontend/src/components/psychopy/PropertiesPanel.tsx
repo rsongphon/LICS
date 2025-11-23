@@ -1,45 +1,59 @@
-import { Box, Text, VStack, Input } from '@chakra-ui/react'
-import { Field } from '../ui/field'
-import { useBuilderStore } from '../../stores/BuilderStore'
+import { Box, Text, VStack } from "@chakra-ui/react"
+import { useBuilderStore } from "../../stores/BuilderStore"
+import { KeyboardPropertiesForm } from "./forms/KeyboardPropertiesForm"
+import { TextPropertiesForm } from "./forms/TextPropertiesForm"
 
-export const PropertiesPanel = () => {
-    const { selectedNode } = useBuilderStore()
+const PropertiesPanel = () => {
+  const { selectedNode } = useBuilderStore()
 
-    if (!selectedNode) {
-        return (
-            <Box w="300px" bg="white" borderLeft="1px" borderColor="gray.200" p={4}>
-                <Text color="gray.500">Select a component to edit properties</Text>
-            </Box>
-        )
-    }
-
+  if (!selectedNode) {
     return (
-        <Box w="300px" bg="white" borderLeft="1px" borderColor="gray.200" p={4}>
-            <Text fontSize="lg" fontWeight="bold" mb={4}>
-                Properties
-            </Text>
-            <VStack gap={4} align="stretch">
-                <Box>
-                    <Text fontWeight="bold" fontSize="sm" mb={1}>
-                        Type
-                    </Text>
-                    <Text fontSize="sm" color="gray.600">
-                        {selectedNode.data.label}
-                    </Text>
-                </Box>
-
-                <Field label="ID">
-                    <Input value={selectedNode.id} readOnly size="sm" />
-                </Field>
-
-                <Field label="Position X">
-                    <Input value={Math.round(selectedNode.position.x)} readOnly size="sm" />
-                </Field>
-
-                <Field label="Position Y">
-                    <Input value={Math.round(selectedNode.position.y)} readOnly size="sm" />
-                </Field>
-            </VStack>
-        </Box>
+      <Box
+        w="300px"
+        h="100%"
+        bg="gray.100"
+        borderLeft="1px"
+        borderColor="gray.200"
+        p={4}
+      >
+        <Text color="gray.500" textAlign="center" mt={10}>
+          Select a component to edit properties
+        </Text>
+      </Box>
     )
+  }
+
+  return (
+    <Box
+      w="300px"
+      h="100%"
+      bg="white"
+      borderLeft="1px"
+      borderColor="gray.200"
+      p={4}
+      overflowY="auto"
+    >
+      <Text fontSize="lg" fontWeight="bold" mb={4}>
+        Properties
+      </Text>
+      <VStack align="stretch" gap={4}>
+        <Text fontWeight="medium">Type: {selectedNode.data.type}</Text>
+        <Text fontSize="sm" color="gray.500">
+          ID: {selectedNode.id}
+        </Text>
+
+        {selectedNode.data.type === "text" && (
+          <TextPropertiesForm node={selectedNode} />
+        )}
+
+        {selectedNode.data.type === "keyboard" && (
+          <KeyboardPropertiesForm node={selectedNode} />
+        )}
+
+        {/* Add other forms here */}
+      </VStack>
+    </Box>
+  )
 }
+
+export default PropertiesPanel

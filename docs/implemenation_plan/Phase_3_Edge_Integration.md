@@ -249,6 +249,20 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
     * `requests`: For API calls.
     * `systemd`: For process management (via `.service` file).
 
+#### 3.4 Virtual Pi & Hardware Emulation (Docker)
+To facilitate development without physical hardware, we will implement a "Virtual Pi" using Docker.
+
+*   **Docker Service:** A `virtual-pi` service in `docker-compose.yml`.
+    *   **Base Image:** `python:3.11-slim`.
+    *   **Network:** Joins the `lics-network` to communicate with `backend` and `mqtt` services.
+    *   **Volumes:** Mounts `./edge` code for live reloading.
+*   **Hardware Emulation (Mocks):**
+    *   Since the container has no GPIO, we will create a mock library: `edge/mocks/RPi/GPIO.py`.
+    *   This mock will log pin state changes to `stdout` (e.g., `[GPIO] Pin 18 set to HIGH`).
+    *   The `agent.py` will conditionally import this mock if `RPi.GPIO` is missing or if `ENV=emulation`.
+*   **Registration:**
+    *   The Virtual Pi will automatically register itself on startup using a fixed MAC address or ID (e.g., `virtual-pi-01`) to avoid creating new devices on every restart.
+
 ---
 
 ### 4. Detailed Implementation Plan
@@ -264,7 +278,8 @@ The core loop to be built is: User clicks "Deploy" -> Backend tells Agent via MQ
         5.  **Edge:** Create `edge/agent.py`.
         6.  **Edge:** Implement agent's `register()`, `authenticate()`, and `start_heartbeat()` methods.
         7.  **Edge:** Create `edge/setup.sh` to install `paho-mqtt`, `requests`, and copy a template `config.ini`.
-        8.  **Backend:** Implement `core/mqtt.py` subscription to `devices/+/status` and a basic `on_message` handler that just `logger.info()` the message.
+        8.  **Edge (Virtual Pi):** Create `edge/Dockerfile` and `edge/mocks/RPi/GPIO.py`. Update `docker-compose.yml` to include `virtual-pi`.
+        9.  **Backend:** Implement `core/mqtt.py` subscription to `devices/+/status` and a basic `on_message` handler that just `logger.info()` the message.
     * **Outputs:** A running Pi that authenticates, sends heartbeats, and whose status messages appear in the backend log.
     * **Checkpoints:** Can you run `setup.sh` on a Pi? Does the `agent.py` start? Does the `devices` table show `status="online"` and a recent `last_seen`?
 

@@ -1,8 +1,18 @@
-import { Container, Heading, VStack, Button, Flex, Spinner, Text, Badge, Card } from "@chakra-ui/react"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import {
+    Badge,
+    Button,
+    Card,
+    Container,
+    Flex,
+    Heading,
+    Spinner,
+    Text,
+    VStack,
+} from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import { DevicesService } from "@/client"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { FiArrowLeft } from "react-icons/fi"
+import { DevicesService } from "@/client"
 
 export const Route = createFileRoute("/_layout/devices/$deviceId/details")({
     component: DeviceDetails,
@@ -11,13 +21,23 @@ export const Route = createFileRoute("/_layout/devices/$deviceId/details")({
 function DeviceDetails() {
     const { deviceId } = Route.useParams()
 
-    const { data: device, isLoading, error } = useQuery({
+    const {
+        data: device,
+        isLoading,
+        error,
+    } = useQuery({
         queryKey: ["devices", deviceId],
         queryFn: () => DevicesService.readDevice({ id: deviceId }),
     })
 
-    if (isLoading) return <Flex justify="center" p={10}><Spinner /></Flex>
-    if (error) return <Text color="red.500">Error loading device: {error.message}</Text>
+    if (isLoading)
+        return (
+            <Flex justify="center" p={10}>
+                <Spinner />
+            </Flex>
+        )
+    if (error)
+        return <Text color="red.500">Error loading device: {error.message}</Text>
     if (!device) return <Text>Device not found</Text>
 
     return (
@@ -39,7 +59,9 @@ function DeviceDetails() {
                         </Flex>
                         <Flex justify="space-between">
                             <Text fontWeight="bold">Status</Text>
-                            <Badge colorPalette={device.status === "online" ? "green" : "red"}>
+                            <Badge
+                                colorPalette={device.status === "online" ? "green" : "red"}
+                            >
                                 {device.status}
                             </Badge>
                         </Flex>
@@ -49,7 +71,11 @@ function DeviceDetails() {
                         </Flex>
                         <Flex justify="space-between">
                             <Text fontWeight="bold">Last Seen</Text>
-                            <Text>{device.last_seen ? new Date(device.last_seen).toLocaleString() : "Never"}</Text>
+                            <Text>
+                                {device.last_seen
+                                    ? new Date(device.last_seen).toLocaleString()
+                                    : "Never"}
+                            </Text>
                         </Flex>
                     </VStack>
                 </Card.Body>

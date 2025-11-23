@@ -1,42 +1,103 @@
-import { Box, VStack, Text, Icon, Flex } from '@chakra-ui/react'
-import { FaFont, FaImage, FaKeyboard, FaVolumeUp } from 'react-icons/fa'
+import { Box, HStack, Icon, Text, VStack } from "@chakra-ui/react"
+import { useDrag } from "react-dnd"
+import { FaFont, FaImage, FaKeyboard, FaMicrochip } from "react-icons/fa"
 
-const components = [
-    { type: 'text', label: 'Text', icon: FaFont },
-    { type: 'image', label: 'Image', icon: FaImage },
-    { type: 'keyboard', label: 'Keyboard', icon: FaKeyboard },
-    { type: 'sound', label: 'Sound', icon: FaVolumeUp },
-]
-
-export const ComponentPalette = () => {
-    const onDragStart = (event: React.DragEvent, nodeType: string) => {
-        event.dataTransfer.setData('application/reactflow', nodeType)
-        event.dataTransfer.effectAllowed = 'move'
-    }
+const DraggableComponent = ({
+    type,
+    icon,
+    label,
+}: {
+    type: string
+    icon: any
+    label: string
+}) => {
+    const [{ isDragging }, drag] = useDrag(() => ({
+        type: "component",
+        item: { type },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+    }))
 
     return (
-        <Box w="250px" bg="white" borderRight="1px" borderColor="gray.200" p={4}>
+        <Box
+            ref={drag}
+            p={3}
+            bg="white"
+            borderRadius="md"
+            boxShadow="sm"
+            cursor="grab"
+            opacity={isDragging ? 0.5 : 1}
+            _hover={{ boxShadow: "md", bg: "gray.50" }}
+            w="100%"
+        >
+            <HStack>
+                <Icon as={icon} color="blue.500" />
+                <Text fontSize="sm" fontWeight="medium">
+                    {label}
+                </Text>
+            </HStack>
+        </Box>
+    )
+}
+
+const ComponentPalette = () => {
+    return (
+        <Box
+            w="250px"
+            h="100%"
+            bg="gray.100"
+            borderRight="1px"
+            borderColor="gray.200"
+            p={4}
+        >
             <Text fontSize="lg" fontWeight="bold" mb={4}>
                 Components
             </Text>
-            <VStack gap={3} align="stretch">
-                {components.map((comp) => (
-                    <Flex
-                        key={comp.type}
-                        align="center"
-                        p={3}
-                        bg="gray.50"
-                        borderRadius="md"
-                        cursor="grab"
-                        draggable
-                        onDragStart={(event) => onDragStart(event, comp.type)}
-                        _hover={{ bg: 'gray.100' }}
-                    >
-                        <Icon as={comp.icon} mr={3} color="blue.500" />
-                        <Text>{comp.label}</Text>
-                    </Flex>
-                ))}
+            <VStack spacing={3} align="stretch">
+                <Text
+                    fontSize="xs"
+                    color="gray.500"
+                    fontWeight="bold"
+                    textTransform="uppercase"
+                >
+                    Stimuli
+                </Text>
+                <DraggableComponent type="text" icon={FaFont} label="Text" />
+                <DraggableComponent type="image" icon={FaImage} label="Image" />
+
+                <Text
+                    fontSize="xs"
+                    color="gray.500"
+                    fontWeight="bold"
+                    textTransform="uppercase"
+                    mt={4}
+                >
+                    Responses
+                </Text>
+                <DraggableComponent
+                    type="keyboard"
+                    icon={FaKeyboard}
+                    label="Keyboard"
+                />
+
+                <Text
+                    fontSize="xs"
+                    color="gray.500"
+                    fontWeight="bold"
+                    textTransform="uppercase"
+                    mt={4}
+                >
+                    I/O
+                </Text>
+                <DraggableComponent
+                    type="gpio"
+                    icon={FaMicrochip}
+                    label="GPIO Output"
+                />
             </VStack>
         </Box>
     )
 }
+
+export default ComponentPalette

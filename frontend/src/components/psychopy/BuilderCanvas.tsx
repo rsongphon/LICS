@@ -1,102 +1,78 @@
-import { useCallback, useRef } from 'react'
-import ReactFlow, {
-    Background,
-    Controls,
-    MiniMap,
-    ReactFlowProvider,
-    Node,
-} from 'reactflow'
-import 'reactflow/dist/style.css'
+import { useCallback } from "react"
+import ReactFlow, { Background, Controls, MiniMap, type Node } from "reactflow"
+import "reactflow/dist/style.css"
+import { Box } from "@chakra-ui/react"
+import { useDrop } from "react-dnd"
+import { useBuilderStore } from "../../stores/BuilderStore"
 
-import { useBuilderStore } from '../../stores/BuilderStore'
-import { Box } from '@chakra-ui/react'
+const BuilderCanvas = () => {
+  const {
+    nodes,
+    edges,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+    addNode,
+    setSelectedNode,
+  } = useBuilderStore()
 
-const BuilderCanvasContent = () => {
-    const reactFlowWrapper = useRef<HTMLDivElement>(null)
-    const {
-        nodes,
-        edges,
-        onNodesChange,
-        onEdgesChange,
-        onConnect,
-        addNode,
-        setSelectedNode,
-    } = useBuilderStore()
+  const [, drop] = useDrop(() => ({
+    accept: "component",
+    drop: (item: { type: string }, monitor) => {
+      const offset = monitor.getClientOffset()
+      // Get the canvas bounds to calculate relative position
+      const canvasBounds = document
+        .querySelector(".react-flow__renderer")
+        ?.getBoundingClientRect()
 
-    // Setup drop target for React DnD (if we were using it for the canvas drop)
-    // However, React Flow handles drop events natively on the wrapper
-    const onDragOver = useCallback((event: React.DragEvent) => {
-        event.preventDefault()
-        event.dataTransfer.dropEffect = 'move'
-    }, [])
+      let position = { x: 100, y: 100 } // Default fallback
 
-    const onDrop = useCallback(
-        (event: React.DragEvent) => {
-            event.preventDefault()
+      if (offset && canvasBounds) {
+        // Calculate position relative to the canvas
+        // We also need to account for the current viewport transform (zoom/pan)
+        // But for now, let's just get it relative to the container
+        // Ideally we'd use reactFlowInstance.project({ x: ..., y: ... })
+        // but we don't have easy access to the instance here without more setup
+        position = {
+          x: offset.x - canvasBounds.left,
+          y: offset.y - canvasBounds.top,
+        }
+      }
 
-            const reactFlowBounds = reactFlowWrapper.current?.getBoundingClientRect()
-            const type = event.dataTransfer.getData('application/reactflow')
+      const newNode: Node = {
+        id: crypto.randomUUID(),
+        type: item.type, // Use the dropped item type
+        position,
+        data: { label: item.type, type: item.type },
+      }
+      addNode(newNode)
+    },
+  }))
 
-            // check if the dropped element is valid
-            if (typeof type === 'undefined' || !type || !reactFlowBounds) {
-                return
-            }
+  const onNodeClick = useCallback(
+    (_: React.MouseEvent, node: Node) => {
+      setSelectedNode(node)
+    },
+    [setSelectedNode],
+  )
 
-            const position = {
-                x: event.clientX - reactFlowBounds.left,
-                y: event.clientY - reactFlowBounds.top,
-            }
-
-            // We need to project the position to the flow coordinate system
-            // For now, simple offset is a start, but ideally use reactFlowInstance.project(position)
-            // We'll improve this when we add the instance ref
-
-            const newNode: Node = {
-                id: `${type}-${Date.now()}`,
-                type: 'default', // We will use custom types later
-                position,
-                data: { label: `${type} node` },
-            }
-
-            addNode(newNode)
-        },
-        [addNode]
-    )
-
-    const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-        setSelectedNode(node)
-    }, [setSelectedNode])
-
-    const onPaneClick = useCallback(() => {
-        setSelectedNode(null)
-    }, [setSelectedNode])
-
-    return (
-        <Box ref={reactFlowWrapper} w="100%" h="100%" bg="gray.50">
-            <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                onNodeClick={onNodeClick}
-                onPaneClick={onPaneClick}
-                onDrop={onDrop}
-                onDragOver={onDragOver}
-                fitView
-            >
-                <Controls />
-                <MiniMap />
-                <Background gap={12} size={1} />
-            </ReactFlow>
-        </Box>
-    )
+  return (
+    <Box ref={drop} h="100%" w="100%" bg="gray.50">
+      <ReactFlow
+        nodes={nodes}
+        edges={edges}
+        onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onConnect={onConnect}
+        onNodeClick={onNodeClick}
+        fitView
+      >
+        <Background />
+        <Controls />
+        <MiniMap />
+      </ReactFlow>
+    </Box>
+  )
 }
 
-export const BuilderCanvas = () => {
-    return (
-        <ReactFlowProvider>
-            <BuilderCanvasContent />
-        </ReactFlowProvider>
-    )
-}
+export default BuilderCanvas

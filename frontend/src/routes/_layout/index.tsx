@@ -1,9 +1,19 @@
-import { Box, Container, Text, SimpleGrid, Card, Heading, Button, Flex, Icon } from "@chakra-ui/react"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import {
+  Box,
+  Button,
+  Card,
+  Container,
+  Flex,
+  Heading,
+  Icon,
+  SimpleGrid,
+  Text,
+} from "@chakra-ui/react"
 import { useQuery } from "@tanstack/react-query"
-import { ExperimentsService, DevicesService } from "@/client"
-import useAuth from "@/hooks/useAuth"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { FiActivity, FiCpu, FiPlus } from "react-icons/fi"
+import { DevicesService, ExperimentsService } from "@/client"
+import useAuth from "@/hooks/useAuth"
 
 export const Route = createFileRoute("/_layout/")({
   component: Dashboard,
@@ -35,7 +45,9 @@ function Dashboard() {
             <Card.Body>
               <Flex align="center" justify="space-between">
                 <Box>
-                  <Text fontSize="sm" color="gray.500">Experiments</Text>
+                  <Text fontSize="sm" color="gray.500">
+                    Experiments
+                  </Text>
                   <Heading size="xl">{experiments?.data.length || 0}</Heading>
                 </Box>
                 <Icon as={FiActivity} boxSize={8} color="blue.500" />
@@ -47,7 +59,9 @@ function Dashboard() {
             <Card.Body>
               <Flex align="center" justify="space-between">
                 <Box>
-                  <Text fontSize="sm" color="gray.500">Devices</Text>
+                  <Text fontSize="sm" color="gray.500">
+                    Devices
+                  </Text>
                   <Heading size="xl">{devices?.data.length || 0}</Heading>
                 </Box>
                 <Icon as={FiCpu} boxSize={8} color="green.500" />
@@ -56,16 +70,18 @@ function Dashboard() {
           </Card.Root>
         </SimpleGrid>
 
-        <Heading size="md" mb={4}>Quick Actions</Heading>
+        <Heading size="md" mb={4}>
+          Quick Actions
+        </Heading>
         <Flex gap={4}>
           <Button asChild colorPalette="blue">
             <Link to="/experiments/create">
-              <FiPlus style={{ marginRight: '8px' }} /> New Experiment
+              <FiPlus style={{ marginRight: "8px" }} /> New Experiment
             </Link>
           </Button>
           <Button asChild colorPalette="green">
             <Link to="/devices/register">
-              <FiPlus style={{ marginRight: '8px' }} /> Register Device
+              <FiPlus style={{ marginRight: "8px" }} /> Register Device
             </Link>
           </Button>
         </Flex>

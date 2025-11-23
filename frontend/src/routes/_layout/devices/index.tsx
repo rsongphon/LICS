@@ -1,20 +1,29 @@
-import { Container, Heading, Table, Button, Flex, Spinner, Text, Badge } from "@chakra-ui/react"
+import {
+    Badge,
+    Button,
+    Container,
+    Flex,
+    Heading,
+    Spinner,
+    Table,
+    Text,
+} from "@chakra-ui/react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { FiPlus, FiTrash2 } from "react-icons/fi"
+import { type DevicePublic, DevicesService } from "@/client"
 import {
-    DialogBody,
     DialogActionTrigger,
+    DialogBody,
+    DialogCloseTrigger,
     DialogContent,
     DialogFooter,
     DialogHeader,
     DialogRoot,
     DialogTitle,
     DialogTrigger,
-    DialogCloseTrigger,
 } from "@/components/ui/dialog"
 import { toaster } from "@/components/ui/toaster"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { DevicesService, type DevicePublic } from "@/client"
 
 export const Route = createFileRoute("/_layout/devices/")({
     component: Devices,
@@ -42,10 +51,15 @@ function Devices() {
                 description: err.message,
                 type: "error",
             })
-        }
+        },
     })
 
-    if (isLoading) return <Flex justify="center" p={10}><Spinner /></Flex>
+    if (isLoading)
+        return (
+            <Flex justify="center" p={10}>
+                <Spinner />
+            </Flex>
+        )
     if (error) return <Text color="red.500">Error loading devices</Text>
 
     return (
@@ -54,7 +68,7 @@ function Devices() {
                 <Heading size="lg">Devices</Heading>
                 <Button asChild colorPalette="blue">
                     <Link to="/devices/register">
-                        <FiPlus style={{ marginRight: '8px' }} /> Register Device
+                        <FiPlus style={{ marginRight: "8px" }} /> Register Device
                     </Link>
                 </Button>
             </Flex>
@@ -64,8 +78,12 @@ function Devices() {
                     <Table.Row>
                         <Table.ColumnHeader role="columnheader">Name</Table.ColumnHeader>
                         <Table.ColumnHeader role="columnheader">Status</Table.ColumnHeader>
-                        <Table.ColumnHeader role="columnheader">Location</Table.ColumnHeader>
-                        <Table.ColumnHeader role="columnheader">Last Seen</Table.ColumnHeader>
+                        <Table.ColumnHeader role="columnheader">
+                            Location
+                        </Table.ColumnHeader>
+                        <Table.ColumnHeader role="columnheader">
+                            Last Seen
+                        </Table.ColumnHeader>
                         <Table.ColumnHeader role="columnheader">Actions</Table.ColumnHeader>
                     </Table.Row>
                 </Table.Header>
@@ -74,16 +92,27 @@ function Devices() {
                         <Table.Row key={device.id}>
                             <Table.Cell>{device.name}</Table.Cell>
                             <Table.Cell>
-                                <Badge colorPalette={device.status === "online" ? "green" : "red"}>
+                                <Badge
+                                    colorPalette={device.status === "online" ? "green" : "red"}
+                                >
                                     {device.status}
                                 </Badge>
                             </Table.Cell>
                             <Table.Cell>{device.location}</Table.Cell>
-                            <Table.Cell>{device.last_seen ? new Date(device.last_seen).toLocaleString() : "Never"}</Table.Cell>
+                            <Table.Cell>
+                                {device.last_seen
+                                    ? new Date(device.last_seen).toLocaleString()
+                                    : "Never"}
+                            </Table.Cell>
                             <Table.Cell>
                                 <Flex gap={2}>
                                     <Button asChild size="sm" variant="outline">
-                                        <Link to="/devices/$deviceId/details" params={{ deviceId: device.id }}>Details</Link>
+                                        <Link
+                                            to="/devices/$deviceId/details"
+                                            params={{ deviceId: device.id }}
+                                        >
+                                            Details
+                                        </Link>
                                     </Button>
                                     <DialogRoot>
                                         <DialogTrigger asChild>
@@ -96,7 +125,8 @@ function Devices() {
                                                 <DialogTitle>Delete Device</DialogTitle>
                                             </DialogHeader>
                                             <DialogBody>
-                                                Are you sure you want to delete this device? This action cannot be undone.
+                                                Are you sure you want to delete this device? This action
+                                                cannot be undone.
                                             </DialogBody>
                                             <DialogFooter>
                                                 <DialogActionTrigger asChild>

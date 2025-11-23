@@ -1,0 +1,8 @@
+# --- Initialize components for {{ node.data.label }} ---
+{{ node.data.label }} = visual.TextStim(win=win, name={{ node.data.label | python_val }},
+    text={{ props.text | default("Hello World") | python_val }},
+    font='Open Sans',
+    pos=({{ props.x | default(0) | float }}, {{ props.y | default(0) | float }}), height=0.05, wrapWidth=None, ori=0.0, 
+    color='white', colorSpace='rgb', opacity=None, 
+    languageStyle='LTR',
+    depth=0.0);

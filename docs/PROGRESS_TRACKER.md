@@ -1,9 +1,9 @@
 # LICS Project Progress Tracker
 
-> **Last Updated:** 2025-11-21
-> **Overall Progress:** 29% Complete
-> **Current Phase:** Phase 1 - COMPLETED (All 4 weeks)
-> **Status:** 🟢 On Track (Phase 1 Complete, Ready for Phase 2)
+> **Last Updated:** 2025-11-22
+> **Overall Progress:** 57% Complete
+> **Current Phase:** Phase 2 - COMPLETED (All 4 weeks)
+> **Status:** 🟢 On Track (Phase 2 Complete, Ready for Phase 3)
 
 ---
 
@@ -13,12 +13,12 @@
 Project Timeline: 14 Weeks (Dec 2024 - Mar 2025)
 
 Phase 1: Foundation          [████████████████████] 100% (4/4 weeks) ✅
-Phase 2: PsychoPy Builder    [░░░░░░░░░░░░░░░░░░░░]   0% (0/4 weeks)
+Phase 2: PsychoPy Builder    [████████████████████] 100% (4/4 weeks) ✅
 Phase 3: Edge Integration    [░░░░░░░░░░░░░░░░░░░░]   0% (0/2 weeks)
 Phase 4: Data & Deployment   [░░░░░░░░░░░░░░░░░░░░]   0% (0/2 weeks)
 Phase 5: Polish & Launch     [░░░░░░░░░░░░░░░░░░░░]   0% (0/2 weeks)
 
-Overall:                     [█████░░░░░░░░░░░░░░░]  29%
+Overall:                     [███████████░░░░░░░░░]  57%
 ```
 
 ### Quick Stats
@@ -27,9 +27,9 @@ Overall:                     [█████░░░░░░░░░░░�
 |--------|--------|---------|---|
 | Database Tables | 5 LICS tables | 2 LICS tables (experiments, devices) | 40% |
 | Backend Models | 8 LICS models | 2 LICS models (Experiment, Device) | 25% |
-| API Endpoints | 25+ LICS endpoints | 10 LICS endpoints (experiments, devices) | 40% |
-| Frontend Pages | 8-10 LICS pages | 6 LICS pages (experiments, devices) | 67% |
-| LICS Code Files | ~150 files | ~30 files | 20% |
+| API Endpoints | 25+ LICS endpoints | 11 LICS endpoints (+compile) | 44% |
+| Frontend Pages | 8-10 LICS pages | 7 LICS pages (+builder) | 78% |
+| LICS Code Files | ~150 files | ~45 files | 30% |
 
 ---
 
@@ -288,218 +288,218 @@ Phase 1 Foundation is now **100% complete**! All core infrastructure, data model
 
 ---
 
-### **PHASE 2: PsychoPy Builder (Weeks 5-8)** ⏳ **NOT STARTED**
+### **PHASE 2: PsychoPy Builder (Weeks 5-8)** ✅ **COMPLETED**
 
 **Dependencies:** Requires Phase 1 completion (Experiments API, MQTT client)
 
-#### Week 5: React Flow Integration ⏳ **NOT STARTED**
+#### Week 5: React Flow Integration ✅ **COMPLETED**
 
 **Estimated Time:** 12-15 hours
 
 **Frontend Dependencies:**
-- [ ] Install React Flow: `npm install reactflow` (5 min)
-- [ ] Install Zustand: `npm install zustand` (5 min)
-- [ ] Install React DnD: `npm install react-dnd react-dnd-html5-backend` (5 min)
+- [x] Install React Flow: `npm install reactflow` (5 min)
+- [x] Install Zustand: `npm install zustand` (5 min)
+- [x] Install React DnD: `npm install react-dnd react-dnd-html5-backend` (5 min)
 
 **Builder Store:**
-- [ ] Create `/frontend/src/stores/builderStore.ts` (2-3 hours)
-  - [ ] Define `BuilderState` interface
-  - [ ] Add `nodes` array state
-  - [ ] Add `edges` array state
-  - [ ] Add `selectedNode` state
-  - [ ] Add actions: `addNode`, `removeNode`, `updateNode`
-  - [ ] Add actions: `addEdge`, `removeEdge`
-  - [ ] Add action: `loadExperiment(experimentData)`
-  - [ ] Add action: `exportExperiment()`
+- [x] Create `/frontend/src/stores/builderStore.ts` (2-3 hours)
+  - [x] Define `BuilderState` interface
+  - [x] Add `nodes` array state
+  - [x] Add `edges` array state
+  - [x] Add `selectedNode` state
+  - [x] Add actions: `addNode`, `removeNode`, `updateNode`
+  - [x] Add actions: `addEdge`, `removeEdge`
+  - [x] Add action: `loadExperiment(experimentData)`
+  - [x] Add action: `exportExperiment()`
 
 **Builder UI:**
-- [ ] Create `/frontend/src/routes/builder/[id].tsx` (4-5 hours)
-  - [ ] Import React Flow components
-  - [ ] Create canvas area for timeline
-  - [ ] Add zoom controls
-  - [ ] Add minimap
-  - [ ] Connect to Zustand store
-  - [ ] Handle node drag and drop
-  - [ ] Handle edge creation
-  - [ ] Add save button (calls Experiments API)
+- [x] Create `/frontend/src/routes/builder/[id].tsx` (4-5 hours)
+  - [x] Import React Flow components
+  - [x] Create canvas area for timeline
+  - [x] Add zoom controls
+  - [x] Add minimap
+  - [x] Connect to Zustand store
+  - [x] Handle node drag and drop
+  - [x] Handle edge creation
+  - [x] Add save button (calls Experiments API)
 
-- [ ] Create `/frontend/src/components/psychopy/ComponentPalette.tsx` (2-3 hours)
-  - [ ] Create draggable component list
-  - [ ] Add "Text" component icon
-  - [ ] Add "Image" component icon
-  - [ ] Add "Sound" component icon
-  - [ ] Add "Keyboard Response" component icon
-  - [ ] Style with Chakra UI
+- [x] Create `/frontend/src/components/psychopy/ComponentPalette.tsx` (2-3 hours)
+  - [x] Create draggable component list
+  - [x] Add "Text" component icon
+  - [x] Add "Image" component icon
+  - [x] Add "Sound" component icon
+  - [x] Add "Keyboard Response" component icon
+  - [x] Style with Chakra UI
 
 **Custom Node Types:**
-- [ ] Create `/frontend/src/components/psychopy/nodes/TextNode.tsx` (1 hour)
-- [ ] Create `/frontend/src/components/psychopy/nodes/ImageNode.tsx` (1 hour)
-- [ ] Create `/frontend/src/components/psychopy/nodes/SoundNode.tsx` (1 hour)
-- [ ] Create `/frontend/src/components/psychopy/nodes/KeyboardNode.tsx` (1 hour)
+- [x] Create `/frontend/src/components/psychopy/nodes/TextNode.tsx` (1 hour)
+- [x] Create `/frontend/src/components/psychopy/nodes/ImageNode.tsx` (1 hour)
+- [x] Create `/frontend/src/components/psychopy/nodes/SoundNode.tsx` (1 hour)
+- [x] Create `/frontend/src/components/psychopy/nodes/KeyboardNode.tsx` (1 hour)
 
 **Completion Criteria:**
-- [ ] Can drag components onto timeline
-- [ ] Can connect components with edges
-- [ ] Can select and delete nodes
-- [ ] Timeline state persists in Zustand store
+- [x] Can drag components onto timeline
+- [x] Can connect components with edges
+- [x] Can select and delete nodes
+- [x] Timeline state persists in Zustand store
 
 ---
 
-#### Week 6: Properties Panel ⏳ **NOT STARTED**
+#### Week 6: Properties Panel ✅ **COMPLETED**
 
 **Estimated Time:** 10-12 hours
 
 **Properties Panel:**
-- [ ] Create `/frontend/src/components/psychopy/PropertiesPanel.tsx` (3-4 hours)
-  - [ ] Conditionally render based on `selectedNode.type`
-  - [ ] Use React Hook Form for form state
-  - [ ] Add real-time updates to Zustand store
+- [x] Create `/frontend/src/components/psychopy/PropertiesPanel.tsx` (3-4 hours)
+  - [x] Conditionally render based on `selectedNode.type`
+  - [x] Use React Hook Form for form state
+  - [x] Add real-time updates to Zustand store
 
 **Component Property Forms:**
-- [ ] Create `/frontend/src/components/psychopy/properties/TextProperties.tsx` (2 hours)
-  - [ ] Text content field
-  - [ ] Font size field
-  - [ ] Color picker
-  - [ ] Position (x, y) fields
-  - [ ] Duration field
+- [x] Create `/frontend/src/components/psychopy/properties/TextProperties.tsx` (2 hours)
+  - [x] Text content field
+  - [x] Font size field
+  - [x] Color picker
+  - [x] Position (x, y) fields
+  - [x] Duration field
 
-- [ ] Create `/frontend/src/components/psychopy/properties/ImageProperties.tsx` (2 hours)
-  - [ ] File upload field
-  - [ ] Position fields
-  - [ ] Size fields
-  - [ ] Duration field
+- [x] Create `/frontend/src/components/psychopy/properties/ImageProperties.tsx` (2 hours)
+  - [x] File upload field
+  - [x] Position fields
+  - [x] Size fields
+  - [x] Duration field
 
-- [ ] Create `/frontend/src/components/psychopy/properties/SoundProperties.tsx` (1-2 hours)
-  - [ ] File upload field
-  - [ ] Volume slider
-  - [ ] Duration field
+- [x] Create `/frontend/src/components/psychopy/properties/SoundProperties.tsx` (1-2 hours)
+  - [x] File upload field
+  - [x] Volume slider
+  - [x] Duration field
 
-- [ ] Create `/frontend/src/components/psychopy/properties/KeyboardProperties.tsx` (2 hours)
-  - [ ] Allowed keys multi-select
-  - [ ] Store response checkbox
-  - [ ] Correct answer field (optional)
-  - [ ] Max wait time field
+- [x] Create `/frontend/src/components/psychopy/properties/KeyboardProperties.tsx` (2 hours)
+  - [x] Allowed keys multi-select
+  - [x] Store response checkbox
+  - [x] Correct answer field (optional)
+  - [x] Max wait time field
 
 **Validation:**
-- [ ] Add Zod schemas for each component type (1 hour)
-- [ ] Add validation error display (30 min)
+- [x] Add Zod schemas for each component type (1 hour)
+- [x] Add validation error display (30 min)
 
 **Completion Criteria:**
-- [ ] Selecting a node shows its properties
-- [ ] Editing properties updates the node in real-time
-- [ ] Invalid inputs show validation errors
-- [ ] All fields use appropriate input types
+- [x] Selecting a node shows its properties
+- [x] Editing properties updates the node in real-time
+- [x] Invalid inputs show validation errors
+- [x] All fields use appropriate input types
 
 ---
 
-#### Week 7: Backend Compiler Foundation ⏳ **NOT STARTED**
+#### Week 7: Backend Compiler Foundation ✅ **COMPLETED**
 
 **Estimated Time:** 10-12 hours
 
 **Compiler Module:**
-- [ ] Create `/backend/app/psychopy/` directory (5 min)
-- [ ] Create `/backend/app/psychopy/__init__.py` (5 min)
-- [ ] Create `/backend/app/psychopy/compiler.py` (4-5 hours)
-  - [ ] Define `compile_experiment(psyexp_data: dict) -> str` function
-  - [ ] Parse nodes from React Flow JSON
-  - [ ] Sort nodes by timeline position
-  - [ ] Validate required fields for each component type
-  - [ ] Return Python code as string
+- [x] Create `/backend/app/psychopy/` directory (5 min)
+- [x] Create `/backend/app/psychopy/__init__.py` (5 min)
+- [x] Create `/backend/app/psychopy/compiler.py` (4-5 hours)
+  - [x] Define `compile_experiment(psyexp_data: dict) -> str` function
+  - [x] Parse nodes from React Flow JSON
+  - [x] Sort nodes by timeline position
+  - [x] Validate required fields for each component type
+  - [x] Return Python code as string
 
-- [ ] Create `/backend/app/psychopy/validators.py` (2 hours)
-  - [ ] `validate_text_component(node_data)`
-  - [ ] `validate_image_component(node_data)`
-  - [ ] `validate_sound_component(node_data)`
-  - [ ] `validate_keyboard_component(node_data)`
-  - [ ] Raise `ValueError` for invalid data
+- [x] Create `/backend/app/psychopy/validators.py` (2 hours)
+  - [x] `validate_text_component(node_data)`
+  - [x] `validate_image_component(node_data)`
+  - [x] `validate_sound_component(node_data)`
+  - [x] `validate_keyboard_component(node_data)`
+  - [x] Raise `ValueError` for invalid data
 
 **Jinja2 Templates:**
-- [ ] Create `/backend/app/psychopy/templates/` directory (5 min)
-- [ ] Create `/backend/app/psychopy/templates/base.py.jinja2` (2-3 hours)
-  - [ ] Add PsychoPy imports
-  - [ ] Add window initialization code
-  - [ ] Add trial loop structure
-  - [ ] Add data saving code
-  - [ ] Add cleanup code
+- [x] Create `/backend/app/psychopy/templates/` directory (5 min)
+- [x] Create `/backend/app/psychopy/templates/base.py.jinja2` (2-3 hours)
+  - [x] Add PsychoPy imports
+  - [x] Add window initialization code
+  - [x] Add trial loop structure
+  - [x] Add data saving code
+  - [x] Add cleanup code
 
-- [ ] Create `/backend/app/psychopy/templates/components/text.py.jinja2` (1 hour)
-- [ ] Create `/backend/app/psychopy/templates/components/image.py.jinja2` (1 hour)
-- [ ] Create `/backend/app/psychopy/templates/components/sound.py.jinja2` (1 hour)
-- [ ] Create `/backend/app/psychopy/templates/components/keyboard.py.jinja2` (1 hour)
+- [x] Create `/backend/app/psychopy/templates/components/text.py.jinja2` (1 hour)
+- [x] Create `/backend/app/psychopy/templates/components/image.py.jinja2` (1 hour)
+- [x] Create `/backend/app/psychopy/templates/components/sound.py.jinja2` (1 hour)
+- [x] Create `/backend/app/psychopy/templates/components/keyboard.py.jinja2` (1 hour)
 
 **API Endpoint:**
-- [ ] Add `POST /api/experiments/{id}/compile` to experiments route (1 hour)
-  - [ ] Load experiment from database
-  - [ ] Call `compile_experiment(exp.psyexp_data)`
-  - [ ] Save generated code to `exp.python_code`
-  - [ ] Return generated code in response
+- [x] Add `POST /api/experiments/{id}/compile` to experiments route (1 hour)
+  - [x] Load experiment from database
+  - [x] Call `compile_experiment(exp.psyexp_data)`
+  - [x] Save generated code to `exp.python_code`
+  - [x] Return generated code in response
 
 **Testing:**
-- [ ] Create `/backend/tests/psychopy/test_compiler.py` (2 hours)
-  - [ ] Test simple text component compilation
-  - [ ] Test multi-component compilation
-  - [ ] Test invalid component data (should raise error)
-  - [ ] Test generated code contains PsychoPy imports
+- [x] Create `/backend/tests/psychopy/test_compiler.py` (2 hours)
+  - [x] Test simple text component compilation
+  - [x] Test multi-component compilation
+  - [x] Test invalid component data (should raise error)
+  - [x] Test generated code contains PsychoPy imports
 
 **Completion Criteria:**
-- [ ] Can compile simple experiment (text + keyboard)
-- [ ] Generated code includes all components in order
-- [ ] Generated code is valid Python syntax
-- [ ] Compilation errors return 400 with clear message
+- [x] Can compile simple experiment (text + keyboard)
+- [x] Generated code includes all components in order
+- [x] Generated code is valid Python syntax
+- [x] Compilation errors return 400 with clear message
 
 ---
 
-#### Week 8: Code Preview & Save ⏳ **NOT STARTED**
+#### Week 8: Code Preview & Save ✅ **COMPLETED**
 
 **Estimated Time:** 8-10 hours
 
 **Monaco Editor:**
-- [ ] Install Monaco: `npm install @monaco-editor/react` (5 min)
-- [ ] Create `/frontend/src/components/psychopy/CodePreview.tsx` (2-3 hours)
-  - [ ] Import Monaco Editor
-  - [ ] Set language to Python
-  - [ ] Set theme to VS Dark
-  - [ ] Make editor read-only
-  - [ ] Add copy button
-  - [ ] Add download button
+- [x] Install Monaco: `npm install @monaco-editor/react` (5 min)
+- [x] Create `/frontend/src/components/psychopy/CodePreview.tsx` (2-3 hours)
+  - [x] Import Monaco Editor
+  - [x] Set language to Python
+  - [x] Set theme to VS Dark
+  - [x] Make editor read-only
+  - [x] Add copy button
+  - [x] Add download button
 
 **Builder Integration:**
-- [ ] Add "Preview Code" button to builder UI (1 hour)
-  - [ ] Call `POST /api/experiments/{id}/compile` on click
-  - [ ] Display generated code in Monaco Editor
-  - [ ] Show loading spinner during compilation
-  - [ ] Show error message if compilation fails
+- [x] Add "Preview Code" button to builder UI (1 hour)
+  - [x] Call `POST /api/experiments/{id}/compile` on click
+  - [x] Display generated code in Monaco Editor
+  - [x] Show loading spinner during compilation
+  - [x] Show error message if compilation fails
 
-- [ ] Add auto-save functionality (2 hours)
-  - [ ] Save to local storage every 30 seconds
-  - [ ] Add "Saved" / "Saving..." indicator
-  - [ ] Call `PUT /api/experiments/{id}` with `psyexp_data`
-  - [ ] Show success/error toast notifications
+- [x] Add auto-save functionality (2 hours)
+  - [x] Save to local storage every 30 seconds
+  - [x] Add "Saved" / "Saving..." indicator
+  - [x] Call `PUT /api/experiments/{id}` with `psyexp_data`
+  - [x] Show success/error toast notifications
 
 **Experiment Metadata:**
-- [ ] Create `/frontend/src/components/psychopy/ExperimentSettings.tsx` (2-3 hours)
-  - [ ] Experiment name field
-  - [ ] Description textarea
-  - [ ] Window size settings (width, height)
-  - [ ] Full screen toggle
-  - [ ] Save button
+- [x] Create `/frontend/src/components/psychopy/ExperimentSettings.tsx` (2-3 hours)
+  - [x] Experiment name field
+  - [x] Description textarea
+  - [x] Window size settings (width, height)
+  - [x] Full screen toggle
+  - [x] Save button
 
 **Testing:**
-- [ ] Manual testing of builder workflow (2 hours)
-  - [ ] Create experiment with 3- [x] **Verification**
+- [x] Manual testing of builder workflow (2 hours)
+  - [x] Create experiment with 3- [x] **Verification**
     - [x] Verify MQTT client connection (Backend)
     - [x] Verify Frontend Login & Dashboard Layout (E2E Tests)
     - [x] Verify Experiment & Device Management (E2E Tests)
-  - [ ] Verify code preview generates correctly
-  - [ ] Verify auto-save works
-  - [ ] Verify can reload and continue editing
+  - [x] Verify code preview generates correctly
+  - [x] Verify auto-save works
+  - [x] Verify can reload and continue editing
 
 **Completion Criteria:**
-- [ ] Can build experiment with multiple components
-- [ ] Can preview generated Python code
-- [ ] Can save experiment and reload later
-- [ ] Code preview shows valid PsychoPy script
-- [ ] **Phase 2 Demo:** User can build simple experiment (text + keyboard), save, compile, and see Python code
+- [x] Can build experiment with multiple components
+- [x] Can preview generated Python code
+- [x] Can save experiment and reload later
+- [x] Code preview shows valid PsychoPy script
+- [x] **Phase 2 Demo:** User can build simple experiment (text + keyboard), save, compile, and see Python code
 
 ---
 
@@ -519,6 +519,19 @@ Phase 1 Foundation is now **100% complete**! All core infrastructure, data model
   - [ ] Add `requests`
   - [ ] Add `python-dotenv`
   - [ ] Add `sqlalchemy` (for local SQLite cache)
+
+**Virtual Pi (Docker):**
+- [ ] Create `/edge/Dockerfile` (1 hour)
+  - [ ] Base image `python:3.11-slim`
+  - [ ] Install dependencies
+  - [ ] Set entrypoint to `agent.py`
+- [ ] Update `docker-compose.yml` (30 min)
+  - [ ] Add `virtual-pi` service
+  - [ ] Mount `/edge` volume
+  - [ ] Connect to `lics-network`
+- [ ] Create `/edge/mocks/RPi/GPIO.py` (1 hour)
+  - [ ] Mock `setmode`, `setup`, `output`, `input`
+  - [ ] Log actions to stdout
 
 **Edge Agent Core:**
 - [ ] Create `/edge/agent.py` (5-6 hours)

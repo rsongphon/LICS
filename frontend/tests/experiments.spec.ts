@@ -1,5 +1,4 @@
 import { expect, test } from "@playwright/test"
-import { randomEmail } from "./utils/random.ts"
 
 // Helper to generate unique experiment names
 const randomExperimentName = () => `Test Experiment ${Date.now()}`
@@ -11,13 +10,19 @@ test.describe("Experiments List Page", () => {
     await page.goto("/experiments")
 
     // Check page title/heading
-    await expect(page.getByRole("heading", { name: "Experiments" })).toBeVisible()
+    await expect(
+      page.getByRole("heading", { name: "Experiments" }),
+    ).toBeVisible()
 
     // Check that Add Experiment button is visible
-    await expect(page.getByRole("link", { name: "Add Experiment" })).toBeVisible()
+    await expect(
+      page.getByRole("link", { name: "Add Experiment" }),
+    ).toBeVisible()
   })
 
-  test("Experiments table is visible with correct columns", async ({ page }) => {
+  test("Experiments table is visible with correct columns", async ({
+    page,
+  }) => {
     // Verified: Table headers now have role="columnheader"
     await page.goto("/experiments")
 
@@ -25,18 +30,32 @@ test.describe("Experiments List Page", () => {
     await page.waitForLoadState("networkidle")
 
     // Check for table headers (if experiments exist) or empty state
-    const tableVisible = await page.getByRole("table").isVisible().catch(() => false)
-    const emptyStateVisible = await page.getByText("No experiments found").isVisible().catch(() => false)
+    const tableVisible = await page
+      .getByRole("table")
+      .isVisible()
+      .catch(() => false)
+    const emptyStateVisible = await page
+      .getByText("No experiments found")
+      .isVisible()
+      .catch(() => false)
 
     // At least one should be visible
     expect(tableVisible || emptyStateVisible).toBe(true)
 
     // If table is visible, check column headers
     if (tableVisible) {
-      await expect(page.getByRole("columnheader", { name: "Name" })).toBeVisible()
-      await expect(page.getByRole("columnheader", { name: "Description" })).toBeVisible()
-      await expect(page.getByRole("columnheader", { name: "Created At" })).toBeVisible()
-      await expect(page.getByRole("columnheader", { name: "Actions" })).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Name" }),
+      ).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Description" }),
+      ).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Created At" }),
+      ).toBeVisible()
+      await expect(
+        page.getByRole("columnheader", { name: "Actions" }),
+      ).toBeVisible()
     }
   })
 
@@ -55,7 +74,9 @@ test.describe("Create Experiment", () => {
     await page.goto("/experiments/create")
 
     // Check heading
-    await expect(page.getByRole("heading", { name: "Create Experiment" })).toBeVisible()
+    await expect(
+      page.getByRole("heading", { name: "Create Experiment" }),
+    ).toBeVisible()
 
     // Check form fields are visible
     await expect(page.getByLabel("Name")).toBeVisible()
@@ -127,7 +148,9 @@ test.describe("Edit Experiment", () => {
     await expect(page).toHaveURL(/\/experiments\/.*\/edit/)
 
     // Should show edit heading
-    await expect(page.getByRole("heading", { name: "Edit Experiment" })).toBeVisible()
+    await expect(
+      page.getByRole("heading", { name: "Edit Experiment" }),
+    ).toBeVisible()
   })
 
   test("Can update experiment successfully", async ({ page }) => {
@@ -152,7 +175,9 @@ test.describe("Edit Experiment", () => {
     await page.getByRole("button", { name: "Save" }).click()
 
     // Should show success message
-    await expect(page.getByText("Experiment updated successfully")).toBeVisible()
+    await expect(
+      page.getByText("Experiment updated successfully"),
+    ).toBeVisible()
 
     // Should redirect to list
     await page.waitForURL("/experiments")
@@ -181,7 +206,9 @@ test.describe("Delete Experiment", () => {
     await page.getByRole("button", { name: "Delete" }).last().click()
 
     // Should show success message
-    await expect(page.getByText("Experiment deleted successfully")).toBeVisible()
+    await expect(
+      page.getByText("Experiment deleted successfully"),
+    ).toBeVisible()
 
     // Experiment should no longer be in the list
     await expect(page.getByText(experimentName)).not.toBeVisible()
@@ -202,7 +229,9 @@ test.describe("Experiments List Features", () => {
 
     // Click on dashboard/home link (usually in sidebar or header)
     // Adjust selector based on actual implementation
-    const homeLink = page.getByRole("link", { name: "Dashboard" }).or(page.getByRole("link", { name: "Home" }))
+    const homeLink = page
+      .getByRole("link", { name: "Dashboard" })
+      .or(page.getByRole("link", { name: "Home" }))
 
     if (await homeLink.isVisible()) {
       await homeLink.click()
