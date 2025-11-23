@@ -30,7 +30,7 @@ export const Route = createFileRoute("/_layout/builder/$id")({
 function BuilderPage() {
   const { id } = Route.useParams()
   const queryClient = useQueryClient()
-  const { nodes, edges, componentProps, setExperimentData } = useBuilderStore()
+  const { nodes, edges, componentProps, setExperimentData, resetStore } = useBuilderStore()
 
   // Track if we've loaded this experiment's data
   const loadedExperimentIdRef = useRef<string | null>(null)
@@ -45,12 +45,17 @@ function BuilderPage() {
   })
 
   useEffect(() => {
-    // Only load experiment data once per experiment, or when switching to a different experiment
+    // Reset store when switching to a different experiment to prevent state contamination
+    if (loadedExperimentIdRef.current !== null && loadedExperimentIdRef.current !== id) {
+      resetStore()
+    }
+
+    // Load experiment data when switching to a different experiment
     if (experiment?.psyexp_data && loadedExperimentIdRef.current !== id) {
       setExperimentData(experiment.psyexp_data)
       loadedExperimentIdRef.current = id
     }
-  }, [experiment?.psyexp_data, id, setExperimentData])
+  }, [experiment?.psyexp_data, id, setExperimentData, resetStore])
 
   const saveMutation = useMutation({
     mutationFn: (data: any) =>

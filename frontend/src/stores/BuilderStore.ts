@@ -26,6 +26,7 @@ export interface BuilderState {
   setNodeProps: (nodeId: string, props: any) => void
   setSelectedNode: (node: Node | null) => void
   setExperimentData: (data: any) => void
+  resetStore: () => void
 }
 
 export const useBuilderStore = create<BuilderState>((set, get) => ({
@@ -137,5 +138,14 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
         componentProps: data.component_props || {}, // Assuming we save props separately or extract them
       })
     }
+  },
+
+  resetStore: () => {
+    set({
+      nodes: [],
+      edges: [],
+      componentProps: {},
+      selectedNode: null,
+    })
   },
 }))
