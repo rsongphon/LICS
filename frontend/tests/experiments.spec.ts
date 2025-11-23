@@ -187,6 +187,40 @@ test.describe("Edit Experiment", () => {
   })
 })
 
+test.describe("View Experiment Details", () => {
+  test("Can view experiment details", async ({ page }) => {
+    const experimentName = randomExperimentName()
+    const experimentDescription = "Description for details view"
+
+    // Create experiment
+    await page.goto("/experiments/create")
+    await page.getByLabel("Name").fill(experimentName)
+    await page.getByLabel("Description").fill(experimentDescription)
+    await page.getByRole("button", { name: "Create" }).click()
+    await page.waitForURL("/experiments")
+
+    // Click View button
+    const row = page.locator("tr", { has: page.getByText(experimentName) })
+    await row.getByRole("link", { name: "View" }).click()
+
+    // Should navigate to details page
+    await expect(page).toHaveURL(/\/experiments\/.*\/details$/) // Ends with ID, not /edit
+
+    // Check details
+    await expect(
+      page.getByRole("heading", { name: experimentName }),
+    ).toBeVisible()
+    await expect(page.getByText(experimentDescription)).toBeVisible()
+    await expect(page.getByText("Experiment ID")).toBeVisible()
+    await expect(page.getByText("Created At")).toBeVisible()
+
+    // Check actions
+    await expect(page.getByRole("link", { name: "Open Builder" })).toBeVisible()
+    await expect(page.getByRole("link", { name: "Edit" })).toBeVisible()
+    await expect(page.getByRole("button", { name: "Delete" })).toBeVisible()
+  })
+})
+
 test.describe("Delete Experiment", () => {
   test("Can delete experiment from list", async ({ page }) => {
     // Create an experiment to delete

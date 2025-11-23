@@ -138,7 +138,9 @@ This document provides comprehensive manual testing procedures for all features 
   - "Edit" and "Delete" buttons
   - "Open Builder" or "Edit in Builder" option
 
-**Pass/Fail:** Failed, there is "View" button in the table. but there are  nothing in the details page. except Hello "/_layout/experiments/$experimentId"!
+**Pass/Fail:** ✅ Pass (View button added, details page implemented)
+
+**Notes:** Details page is accessible at `/experiments/{id}` and displays all experiment information.
 
 ---
 

@@ -104,6 +104,14 @@ function Experiments() {
                                     <Flex gap={2}>
                                         <Button asChild size="sm" variant="outline">
                                             <Link
+                                                to="/experiments/$experimentId/details"
+                                                params={{ experimentId: experiment.id }}
+                                            >
+                                                View
+                                            </Link>
+                                        </Button>
+                                        <Button asChild size="sm" variant="outline">
+                                            <Link
                                                 to="/experiments/$experimentId/edit"
                                                 params={{ experimentId: experiment.id }}
                                             >
