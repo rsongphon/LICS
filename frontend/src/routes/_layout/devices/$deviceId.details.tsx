@@ -70,6 +70,10 @@ function DeviceDetails() {
               <Text>{device.location || "-"}</Text>
             </Flex>
             <Flex justify="space-between">
+              <Text fontWeight="bold">Description</Text>
+              <Text>{device.description || "-"}</Text>
+            </Flex>
+            <Flex justify="space-between">
               <Text fontWeight="bold">Last Seen</Text>
               <Text>
                 {device.last_seen
@@ -77,6 +81,26 @@ function DeviceDetails() {
                   : "Never"}
               </Text>
             </Flex>
+            <VStack align="stretch">
+              <Text fontWeight="bold">Configuration</Text>
+              <Card.Root variant="subtle">
+                <Card.Body p={2}>
+                  <pre style={{ fontSize: "0.8em" }}>
+                    {JSON.stringify(device.config, null, 2)}
+                  </pre>
+                </Card.Body>
+              </Card.Root>
+            </VStack>
+            <VStack align="stretch">
+              <Text fontWeight="bold">Capabilities</Text>
+              <Card.Root variant="subtle">
+                <Card.Body p={2}>
+                  <pre style={{ fontSize: "0.8em" }}>
+                    {JSON.stringify(device.capabilities, null, 2)}
+                  </pre>
+                </Card.Body>
+              </Card.Root>
+            </VStack>
           </VStack>
         </Card.Body>
       </Card.Root>
