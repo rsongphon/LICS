@@ -478,7 +478,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Changes saved to component state
 - ✅ No errors in console
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -494,7 +494,7 @@ This document provides comprehensive manual testing procedures for all features 
   - **Store Correct** (checkbox)
   - **Correct Answer** (text, conditional visibility)
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -511,7 +511,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Correct Answer field appears when Store Correct is checked
 - ✅ Changes persist in state
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -524,7 +524,9 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Form is hidden
 - ✅ No node highlighted on canvas
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass (Fixed: Added onPaneClick handler to clear selection)
+
+**Notes:** Canvas deselection was fixed by adding an `onPaneClick` callback in `BuilderCanvas.tsx` that sets the selected node to null when clicking on empty canvas area.
 
 ---
 

@@ -56,6 +56,10 @@ const BuilderCanvas = () => {
     [setSelectedNode],
   )
 
+  const onPaneClick = useCallback(() => {
+    setSelectedNode(null)
+  }, [setSelectedNode])
+
   return (
     <Box ref={drop} h="100%" w="100%" bg="gray.50">
       <ReactFlow
@@ -65,6 +69,7 @@ const BuilderCanvas = () => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         onNodeClick={onNodeClick}
+        onPaneClick={onPaneClick}
         fitView
       >
         <Background />
