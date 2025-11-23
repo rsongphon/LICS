@@ -26,17 +26,29 @@ export const KeyboardPropertiesForm = ({ node }: { node: Node }) => {
 
   // Track the current node ID to detect when selection changes
   const previousNodeIdRef = useRef(node.id)
+  // Track if this is the initial mount to avoid calling setNodeProps on load
+  const isInitialMountRef = useRef(true)
 
-  // Watch for changes and update store
-  const values = watch()
+  // Watch individual fields instead of all values to avoid new object references
+  const allowed_keys = watch("allowed_keys")
+  const duration = watch("duration")
+  const store_correct = watch("store_correct")
+  const correct_answer = watch("correct_answer")
 
+  // Update store when fields change
   useEffect(() => {
-    // Only update store if this is the same node (user is editing)
-    // Skip updates during initial load or when switching nodes
-    if (previousNodeIdRef.current === node.id) {
-      setNodeProps(node.id, values)
+    // Skip the initial mount - don't call setNodeProps with default values
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false
+      return
     }
-  }, [node.id, setNodeProps, values])
+
+    // Only update store if this is the same node (user is editing)
+    // Skip updates when switching nodes
+    if (previousNodeIdRef.current === node.id) {
+      setNodeProps(node.id, { allowed_keys, duration, store_correct, correct_answer })
+    }
+  }, [node.id, setNodeProps, allowed_keys, duration, store_correct, correct_answer])
 
   // Update form when node selection changes to a different node
   useEffect(() => {
@@ -46,8 +58,10 @@ export const KeyboardPropertiesForm = ({ node }: { node: Node }) => {
       setValue("store_correct", node.data.store_correct || false)
       setValue("correct_answer", node.data.correct_answer || "")
       previousNodeIdRef.current = node.id
+      isInitialMountRef.current = true // Reset for the new node
     }
-  }, [setValue, node.id, node.data.allowed_keys, node.data.duration, node.data.store_correct, node.data.correct_answer])
+  }, [node.id, node.data.allowed_keys, node.data.duration, node.data.store_correct, node.data.correct_answer, setValue])
+
 
   return (
     <VStack gap={4} align="stretch">
@@ -66,7 +80,7 @@ export const KeyboardPropertiesForm = ({ node }: { node: Node }) => {
 
       <Checkbox {...register("store_correct")}>Store Correct</Checkbox>
 
-      {values.store_correct && (
+      {store_correct && (
         <Field label="Correct Answer">
           <Input {...register("correct_answer")} />
         </Field>

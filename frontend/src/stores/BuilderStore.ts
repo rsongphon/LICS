@@ -35,8 +35,30 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   selectedNode: null,
 
   onNodesChange: (changes: NodeChange[]) => {
+    const currentState = get()
+    const updatedNodes = applyNodeChanges(changes, currentState.nodes)
+
+    // Check if any nodes were removed
+    const removedNodeIds = changes
+      .filter((change) => change.type === 'remove')
+      .map((change) => change.id)
+
+    // Clear selectedNode if it was removed
+    const updatedSelectedNode =
+      currentState.selectedNode && removedNodeIds.includes(currentState.selectedNode.id)
+        ? null
+        : currentState.selectedNode
+
+    // Clean up componentProps for removed nodes
+    const updatedComponentProps = { ...currentState.componentProps }
+    removedNodeIds.forEach((id) => {
+      delete updatedComponentProps[id]
+    })
+
     set({
-      nodes: applyNodeChanges(changes, get().nodes),
+      nodes: updatedNodes,
+      selectedNode: updatedSelectedNode,
+      componentProps: updatedComponentProps,
     })
   },
 
@@ -64,16 +86,41 @@ export const useBuilderStore = create<BuilderState>((set, get) => ({
   },
 
   setNodeProps: (nodeId: string, props: any) => {
-    set((state) => ({
-      componentProps: {
+    set((state) => {
+      // Update componentProps
+      const updatedComponentProps = {
         ...state.componentProps,
         [nodeId]: { ...state.componentProps[nodeId], ...props },
-      },
-      // Also update the node data for React Flow to react if needed
-      nodes: state.nodes.map((n) =>
-        n.id === nodeId ? { ...n, data: { ...n.data, ...props } } : n,
-      ),
-    }))
+      }
+
+      // Also update the node's data in the nodes array to keep everything in sync
+      const updatedNodes = state.nodes.map((node) => {
+        if (node.id === nodeId) {
+          return {
+            ...node,
+            data: { ...node.data, ...props },
+            // Update position if x/y are in props
+            ...(props.x !== undefined || props.y !== undefined
+              ? {
+                position: {
+                  x: props.x ?? node.position.x,
+                  y: props.y ?? node.position.y,
+                },
+              }
+              : {}),
+          }
+        }
+        return node
+      })
+
+      // DO NOT update selectedNode here - it causes infinite loops!
+      // The PropertiesPanel will get updated node data from the nodes array
+      // through Zustand's reactive system when it accesses selectedNode
+      return {
+        componentProps: updatedComponentProps,
+        nodes: updatedNodes,
+      }
+    })
   },
 
   setSelectedNode: (node: Node | null) => {

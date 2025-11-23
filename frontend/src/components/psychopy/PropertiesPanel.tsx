@@ -4,9 +4,14 @@ import { KeyboardPropertiesForm } from "./forms/KeyboardPropertiesForm"
 import { TextPropertiesForm } from "./forms/TextPropertiesForm"
 
 const PropertiesPanel = () => {
-  const { selectedNode } = useBuilderStore()
+  const { selectedNode, nodes } = useBuilderStore()
 
-  if (!selectedNode) {
+  // Get the current node data from the nodes array to ensure we have fresh data
+  const currentNode = selectedNode
+    ? nodes.find(n => n.id === selectedNode.id) || selectedNode
+    : null
+
+  if (!currentNode) {
     return (
       <Box
         w="300px"
@@ -37,17 +42,17 @@ const PropertiesPanel = () => {
         Properties
       </Text>
       <VStack align="stretch" gap={4}>
-        <Text fontWeight="medium">Type: {selectedNode.data.type}</Text>
+        <Text fontWeight="medium">Type: {currentNode.data.type}</Text>
         <Text fontSize="sm" color="gray.500">
-          ID: {selectedNode.id}
+          ID: {currentNode.id}
         </Text>
 
-        {selectedNode.data.type === "text" && (
-          <TextPropertiesForm node={selectedNode} />
+        {currentNode.data.type === "text" && (
+          <TextPropertiesForm node={currentNode} />
         )}
 
-        {selectedNode.data.type === "keyboard" && (
-          <KeyboardPropertiesForm node={selectedNode} />
+        {currentNode.data.type === "keyboard" && (
+          <KeyboardPropertiesForm node={currentNode} />
         )}
 
         {/* Add other forms here */}

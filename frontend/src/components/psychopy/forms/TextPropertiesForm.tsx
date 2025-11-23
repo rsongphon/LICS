@@ -25,17 +25,29 @@ export const TextPropertiesForm = ({ node }: { node: Node }) => {
 
   // Track the current node ID to detect when selection changes
   const previousNodeIdRef = useRef(node.id)
+  // Track if this is the initial mount to avoid calling setNodeProps on load
+  const isInitialMountRef = useRef(true)
 
-  // Watch for changes and update store
-  const values = watch()
+  // Watch individual fields instead of all values to avoid new object references
+  const text = watch("text")
+  const duration = watch("duration")
+  const x = watch("x")
+  const y = watch("y")
 
+  // Update store when fields change
   useEffect(() => {
-    // Only update store if this is the same node (user is editing)
-    // Skip updates during initial load or when switching nodes
-    if (previousNodeIdRef.current === node.id) {
-      setNodeProps(node.id, values)
+    // Skip the initial mount - don't call setNodeProps with default values
+    if (isInitialMountRef.current) {
+      isInitialMountRef.current = false
+      return
     }
-  }, [node.id, setNodeProps, values])
+
+    // Only update store if this is the same node (user is editing)
+    // Skip updates when switching nodes
+    if (previousNodeIdRef.current === node.id) {
+      setNodeProps(node.id, { text, duration, x, y })
+    }
+  }, [node.id, setNodeProps, text, duration, x, y])
 
   // Update form when node selection changes to a different node
   useEffect(() => {
@@ -45,8 +57,10 @@ export const TextPropertiesForm = ({ node }: { node: Node }) => {
       setValue("x", node.position.x)
       setValue("y", node.position.y)
       previousNodeIdRef.current = node.id
+      isInitialMountRef.current = true // Reset for the new node
     }
-  }, [setValue, node.id, node.data.text, node.data.duration, node.position.x, node.position.y])
+  }, [node.id, node.data.text, node.data.duration, node.position.x, node.position.y, setValue])
+
 
   return (
     <VStack gap={4} align="stretch">
