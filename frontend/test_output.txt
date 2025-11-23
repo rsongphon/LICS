@@ -1,0 +1,73 @@
+[dotenv@17.2.2] injecting env (24) from ../.env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+Running 2 tests using 1 worker
+
+[1A[2K[dotenv@17.2.2] injecting env (0) from ../.env -- tip: ⚙️  load multiple .env files with { path: ['.env.local', '.env'] }
+
+[1A[2K[1/2] [setup] › tests/auth.setup.ts:6:1 › authenticate
+[1A[2K[setup] › tests/auth.setup.ts:6:1 › authenticate
+Browser console: [vite] connecting...
+
+[1A[2KBrowser console: [vite] connected.
+
+[1A[2KBrowser console: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2KBrowser console: [@tanstack/router-devtools] This package has moved to @tanstack/react-router-devtools. Please switch to the new package at your earliest convenience, as this package will be dropped in the next major version release.
+
+[1A[2KFilling email: admin@lics.com
+
+[1A[2KFilling password
+
+[1A[2KClicking Log In button
+
+[1A[2KCurrent URL: http://localhost:5173/
+
+[1A[2KBrowser console: Access token present: true
+
+[1A[2KHas access token: [33mtrue[39m
+
+[1A[2KWaiting for URL change to /
+
+[1A[2KSuccessfully navigated to /
+
+[1A[2KAuth state saved to: playwright/.auth/user.json
+
+[1A[2K[2/2] [chromium] › tests/builder.spec.ts:5:5 › Builder › should create, edit, save and compile an experiment
+[1A[2K[chromium] › tests/builder.spec.ts:5:5 › Builder › should create, edit, save and compile an experiment
+Navigating to builder for experiment ID: 1a7e8511-8b01-472b-a69d-e5c031ea2393
+
+[1A[2KHeading not visible
+
+[1A[2KPage text: 
+
+[1A[2K  1) [chromium] › tests/builder.spec.ts:5:5 › Builder › should create, edit, save and compile an experiment 
+
+    Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+
+    Locator: getByRole('heading', { name: 'Test Exp test_d90dw@example.com' })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+    [2m  - Expect "toBeVisible" with timeout 5000ms[22m
+    [2m  - waiting for getByRole('heading', { name: 'Test Exp test_d90dw@example.com' })[22m
+
+
+      57 |             console.log(`Page text: ${await page.innerText('body')}`);
+      58 |         }
+    > 59 |         await expect(page.getByRole('heading', { name: expName })).toBeVisible();
+         |                                                                    ^
+      60 |
+      61 |         // 4. Builder Interaction
+      62 |         await expect(page.getByText('Components')).toBeVisible();
+        at /Users/beacon/LICS/frontend/tests/builder.spec.ts:59:68
+
+    Error Context: test-results/builder-Builder-should-cre-be829-e-and-compile-an-experiment-chromium/error-context.md
+
+
+[1A[2K  1 failed
+    [chromium] › tests/builder.spec.ts:5:5 › Builder › should create, edit, save and compile an experiment 
+  1 passed (1.7m)
+
+[36m  Serving HTML report at http://localhost:61769. Press Ctrl+C to quit.[39m

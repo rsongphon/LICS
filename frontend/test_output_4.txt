@@ -1,0 +1,44 @@
+[dotenv@17.2.2] injecting env (24) from ../.env -- tip: 🔐 prevent committing .env to code: https://dotenvx.com/precommit
+
+Running 2 tests using 1 worker
+
+[1A[2K[dotenv@17.2.2] injecting env (0) from ../.env -- tip: ⚙️  suppress all logs with { quiet: true }
+
+[1A[2K[1/2] [setup] › tests/auth.setup.ts:6:1 › authenticate
+[1A[2K[setup] › tests/auth.setup.ts:6:1 › authenticate
+Browser console: [vite] connecting...
+
+[1A[2KBrowser console: [vite] connected.
+
+[1A[2KBrowser console: %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+
+[1A[2KBrowser console: [@tanstack/router-devtools] This package has moved to @tanstack/react-router-devtools. Please switch to the new package at your earliest convenience, as this package will be dropped in the next major version release.
+
+[1A[2KFilling email: admin@lics.com
+
+[1A[2KFilling password
+
+[1A[2KClicking Log In button
+
+[1A[2KCurrent URL: http://localhost:5173/
+
+[1A[2KBrowser console: Access token present: true
+
+[1A[2KHas access token: [33mtrue[39m
+
+[1A[2KWaiting for URL change to /
+
+[1A[2KSuccessfully navigated to /
+
+[1A[2KAuth state saved to: playwright/.auth/user.json
+
+[1A[2K[2/2] [chromium] › tests/builder.spec.ts:5:5 › Builder › should create, edit, save and compile an experiment
+[1A[2K[chromium] › tests/builder.spec.ts:5:5 › Builder › should create, edit, save and compile an experiment
+Navigating to builder for experiment ID: bd1fd727-894e-4dda-8ec9-c20dc6097a77
+
+[1A[2K  2 passed (1.6m)
+
+To open last HTML report run:
+[36m[39m
+[36m  npx playwright show-report[39m
+[36m[39m

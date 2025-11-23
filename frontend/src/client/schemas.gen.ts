@@ -173,6 +173,17 @@ export const DeviceRegisterSchema = {
             ],
             title: 'Location'
         },
+        description: {
+            anyOf: [
+                {
+                    type: 'string'
+                },
+                {
+                    type: 'null'
+                }
+            ],
+            title: 'Description'
+        },
         capabilities: {
             additionalProperties: true,
             type: 'object',

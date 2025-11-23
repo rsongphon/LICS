@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { DevicesReadDevicesData, DevicesReadDevicesResponse, DevicesRegisterDeviceData, DevicesRegisterDeviceResponse, DevicesReadDeviceData, DevicesReadDeviceResponse, DevicesUpdateDeviceData, DevicesUpdateDeviceResponse, DevicesDeleteDeviceData, DevicesDeleteDeviceResponse, ExperimentsReadExperimentsData, ExperimentsReadExperimentsResponse, ExperimentsCreateExperimentData, ExperimentsCreateExperimentResponse, ExperimentsReadExperimentData, ExperimentsReadExperimentResponse, ExperimentsUpdateExperimentData, ExperimentsUpdateExperimentResponse, ExperimentsDeleteExperimentData, ExperimentsDeleteExperimentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
+import type { DevicesReadDevicesData, DevicesReadDevicesResponse, DevicesRegisterDeviceData, DevicesRegisterDeviceResponse, DevicesReadDeviceData, DevicesReadDeviceResponse, DevicesUpdateDeviceData, DevicesUpdateDeviceResponse, DevicesDeleteDeviceData, DevicesDeleteDeviceResponse, ExperimentsReadExperimentsData, ExperimentsReadExperimentsResponse, ExperimentsCreateExperimentData, ExperimentsCreateExperimentResponse, ExperimentsReadExperimentData, ExperimentsReadExperimentResponse, ExperimentsUpdateExperimentData, ExperimentsUpdateExperimentResponse, ExperimentsDeleteExperimentData, ExperimentsDeleteExperimentResponse, ExperimentsCompileExperimentData, ExperimentsCompileExperimentResponse, ItemsReadItemsData, ItemsReadItemsResponse, ItemsCreateItemData, ItemsCreateItemResponse, ItemsReadItemData, ItemsReadItemResponse, ItemsUpdateItemData, ItemsUpdateItemResponse, ItemsDeleteItemData, ItemsDeleteItemResponse, LoginLoginAccessTokenData, LoginLoginAccessTokenResponse, LoginTestTokenResponse, LoginRecoverPasswordData, LoginRecoverPasswordResponse, LoginResetPasswordData, LoginResetPasswordResponse, LoginRecoverPasswordHtmlContentData, LoginRecoverPasswordHtmlContentResponse, PrivateCreateUserData, PrivateCreateUserResponse, UsersReadUsersData, UsersReadUsersResponse, UsersCreateUserData, UsersCreateUserResponse, UsersReadUserMeResponse, UsersDeleteUserMeResponse, UsersUpdateUserMeData, UsersUpdateUserMeResponse, UsersUpdatePasswordMeData, UsersUpdatePasswordMeResponse, UsersRegisterUserData, UsersRegisterUserResponse, UsersReadUserByIdData, UsersReadUserByIdResponse, UsersUpdateUserData, UsersUpdateUserResponse, UsersDeleteUserData, UsersDeleteUserResponse, UtilsTestEmailData, UtilsTestEmailResponse, UtilsHealthCheckResponse } from './types.gen';
 
 export class DevicesService {
     /**
@@ -217,6 +217,27 @@ export class ExperimentsService {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/v1/experiments/{id}',
+            path: {
+                id: data.id
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Compile Experiment
+     * Compile experiment to Python code.
+     * @param data The data for the request.
+     * @param data.id
+     * @returns ExperimentPublic Successful Response
+     * @throws ApiError
+     */
+    public static compileExperiment(data: ExperimentsCompileExperimentData): CancelablePromise<ExperimentsCompileExperimentResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/v1/experiments/{id}/compile',
             path: {
                 id: data.id
             },
@@ -666,7 +687,7 @@ export class UtilsService {
     public static testEmail(data: UtilsTestEmailData): CancelablePromise<UtilsTestEmailResponse> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/v1/utils/utils/test-email/',
+            url: '/api/v1/utils/test-email/',
             query: {
                 email_to: data.emailTo
             },
@@ -684,7 +705,7 @@ export class UtilsService {
     public static healthCheck(): CancelablePromise<UtilsHealthCheckResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/v1/utils/utils/health-check/'
+            url: '/api/v1/utils/health-check/'
         });
     }
 }

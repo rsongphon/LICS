@@ -32,6 +32,7 @@ export type DeviceRegister = {
     device_id: string;
     name: string;
     location?: (string | null);
+    description?: (string | null);
     capabilities?: {
         [key: string]: unknown;
     };
@@ -270,6 +271,12 @@ export type ExperimentsDeleteExperimentData = {
 };
 
 export type ExperimentsDeleteExperimentResponse = (ExperimentPublic);
+
+export type ExperimentsCompileExperimentData = {
+    id: string;
+};
+
+export type ExperimentsCompileExperimentResponse = (ExperimentPublic);
 
 export type ItemsReadItemsData = {
     limit?: number;

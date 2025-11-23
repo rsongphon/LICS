@@ -31,4 +31,5 @@ class DeviceRegister(SQLModel):
     device_id: str
     name: str
     location: str | None = None
+    description: str | None = None
     capabilities: dict[str, Any] = Field(default_factory=dict)

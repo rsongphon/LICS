@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
-import { FiArrowLeft, FiEdit2, FiTrash2, FiCpu } from "react-icons/fi"
+import { FiArrowLeft, FiCpu, FiEdit2, FiTrash2 } from "react-icons/fi"
 import { ExperimentsService } from "@/client"
 import {
   DialogActionTrigger,
@@ -25,7 +25,9 @@ import {
 } from "@/components/ui/dialog"
 import { toaster } from "@/components/ui/toaster"
 
-export const Route = createFileRoute("/_layout/experiments/$experimentId/details")({
+export const Route = createFileRoute(
+  "/_layout/experiments/$experimentId/details",
+)({
   component: ExperimentDetails,
 })
 
@@ -69,7 +71,9 @@ function ExperimentDetails() {
       </Flex>
     )
   if (error)
-    return <Text color="red.500">Error loading experiment: {error.message}</Text>
+    return (
+      <Text color="red.500">Error loading experiment: {error.message}</Text>
+    )
   if (!experiment) return <Text>Experiment not found</Text>
 
   return (
@@ -142,9 +146,7 @@ function ExperimentDetails() {
             </Flex>
             <Flex justify="space-between">
               <Text fontWeight="bold">Created At</Text>
-              <Text>
-                {new Date(experiment.created_at).toLocaleString()}
-              </Text>
+              <Text>{new Date(experiment.created_at).toLocaleString()}</Text>
             </Flex>
             <Flex justify="space-between">
               <Text fontWeight="bold">Created By</Text>

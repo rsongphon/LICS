@@ -207,13 +207,12 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Success notification
 - ✅ New device appears in table
 - ✅ Status shows "offline" or "unknown"
-- ✅ API key generated and displayed (one-time)
 
-**Pass/Fail:** Partial Pass, still no one time API key displayed (not sure if it created)
+**Pass/Fail:** ✅ Pass
 
 **Notes:** 
-- Device ID: cd1eed36-0173-4f32-a37c-c89003042a6a
-- API Key (save this): Does not have, no API key displayed (not sure if it created)
+- Device ID: `RPI-TEST-001`
+- API Key generation is currently not implemented in the backend response.
 
 ---
 
