@@ -25,6 +25,7 @@ import { Route as LayoutDevicesRegisterRouteImport } from './routes/_layout/devi
 import { Route as LayoutBuilderIdRouteImport } from './routes/_layout/builder/$id'
 import { Route as LayoutExperimentsExperimentIdEditRouteImport } from './routes/_layout/experiments/$experimentId.edit'
 import { Route as LayoutExperimentsExperimentIdDetailsRouteImport } from './routes/_layout/experiments/$experimentId.details'
+import { Route as LayoutDevicesDeviceIdEditRouteImport } from './routes/_layout/devices/$deviceId.edit'
 import { Route as LayoutDevicesDeviceIdDetailsRouteImport } from './routes/_layout/devices/$deviceId.details'
 
 const SignupRoute = SignupRouteImport.update({
@@ -108,6 +109,12 @@ const LayoutExperimentsExperimentIdDetailsRoute =
     path: '/experiments/$experimentId/details',
     getParentRoute: () => LayoutRoute,
   } as any)
+const LayoutDevicesDeviceIdEditRoute =
+  LayoutDevicesDeviceIdEditRouteImport.update({
+    id: '/devices/$deviceId/edit',
+    path: '/devices/$deviceId/edit',
+    getParentRoute: () => LayoutRoute,
+  } as any)
 const LayoutDevicesDeviceIdDetailsRoute =
   LayoutDevicesDeviceIdDetailsRouteImport.update({
     id: '/devices/$deviceId/details',
@@ -130,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/devices': typeof LayoutDevicesIndexRoute
   '/experiments': typeof LayoutExperimentsIndexRoute
   '/devices/$deviceId/details': typeof LayoutDevicesDeviceIdDetailsRoute
+  '/devices/$deviceId/edit': typeof LayoutDevicesDeviceIdEditRoute
   '/experiments/$experimentId/details': typeof LayoutExperimentsExperimentIdDetailsRoute
   '/experiments/$experimentId/edit': typeof LayoutExperimentsExperimentIdEditRoute
 }
@@ -148,6 +156,7 @@ export interface FileRoutesByTo {
   '/devices': typeof LayoutDevicesIndexRoute
   '/experiments': typeof LayoutExperimentsIndexRoute
   '/devices/$deviceId/details': typeof LayoutDevicesDeviceIdDetailsRoute
+  '/devices/$deviceId/edit': typeof LayoutDevicesDeviceIdEditRoute
   '/experiments/$experimentId/details': typeof LayoutExperimentsExperimentIdDetailsRoute
   '/experiments/$experimentId/edit': typeof LayoutExperimentsExperimentIdEditRoute
 }
@@ -168,6 +177,7 @@ export interface FileRoutesById {
   '/_layout/devices/': typeof LayoutDevicesIndexRoute
   '/_layout/experiments/': typeof LayoutExperimentsIndexRoute
   '/_layout/devices/$deviceId/details': typeof LayoutDevicesDeviceIdDetailsRoute
+  '/_layout/devices/$deviceId/edit': typeof LayoutDevicesDeviceIdEditRoute
   '/_layout/experiments/$experimentId/details': typeof LayoutExperimentsExperimentIdDetailsRoute
   '/_layout/experiments/$experimentId/edit': typeof LayoutExperimentsExperimentIdEditRoute
 }
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/devices'
     | '/experiments'
     | '/devices/$deviceId/details'
+    | '/devices/$deviceId/edit'
     | '/experiments/$experimentId/details'
     | '/experiments/$experimentId/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/devices'
     | '/experiments'
     | '/devices/$deviceId/details'
+    | '/devices/$deviceId/edit'
     | '/experiments/$experimentId/details'
     | '/experiments/$experimentId/edit'
   id:
@@ -225,6 +237,7 @@ export interface FileRouteTypes {
     | '/_layout/devices/'
     | '/_layout/experiments/'
     | '/_layout/devices/$deviceId/details'
+    | '/_layout/devices/$deviceId/edit'
     | '/_layout/experiments/$experimentId/details'
     | '/_layout/experiments/$experimentId/edit'
   fileRoutesById: FileRoutesById
@@ -351,6 +364,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutExperimentsExperimentIdDetailsRouteImport
       parentRoute: typeof LayoutRoute
     }
+    '/_layout/devices/$deviceId/edit': {
+      id: '/_layout/devices/$deviceId/edit'
+      path: '/devices/$deviceId/edit'
+      fullPath: '/devices/$deviceId/edit'
+      preLoaderRoute: typeof LayoutDevicesDeviceIdEditRouteImport
+      parentRoute: typeof LayoutRoute
+    }
     '/_layout/devices/$deviceId/details': {
       id: '/_layout/devices/$deviceId/details'
       path: '/devices/$deviceId/details'
@@ -372,6 +392,7 @@ interface LayoutRouteChildren {
   LayoutDevicesIndexRoute: typeof LayoutDevicesIndexRoute
   LayoutExperimentsIndexRoute: typeof LayoutExperimentsIndexRoute
   LayoutDevicesDeviceIdDetailsRoute: typeof LayoutDevicesDeviceIdDetailsRoute
+  LayoutDevicesDeviceIdEditRoute: typeof LayoutDevicesDeviceIdEditRoute
   LayoutExperimentsExperimentIdDetailsRoute: typeof LayoutExperimentsExperimentIdDetailsRoute
   LayoutExperimentsExperimentIdEditRoute: typeof LayoutExperimentsExperimentIdEditRoute
 }
@@ -387,6 +408,7 @@ const LayoutRouteChildren: LayoutRouteChildren = {
   LayoutDevicesIndexRoute: LayoutDevicesIndexRoute,
   LayoutExperimentsIndexRoute: LayoutExperimentsIndexRoute,
   LayoutDevicesDeviceIdDetailsRoute: LayoutDevicesDeviceIdDetailsRoute,
+  LayoutDevicesDeviceIdEditRoute: LayoutDevicesDeviceIdEditRoute,
   LayoutExperimentsExperimentIdDetailsRoute:
     LayoutExperimentsExperimentIdDetailsRoute,
   LayoutExperimentsExperimentIdEditRoute:

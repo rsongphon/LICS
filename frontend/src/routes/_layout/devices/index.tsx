@@ -114,6 +114,14 @@ function Devices() {
                       Details
                     </Link>
                   </Button>
+                  <Button asChild size="sm" variant="outline">
+                    <Link
+                      to="/devices/$deviceId/edit"
+                      params={{ deviceId: device.id }}
+                    >
+                      Edit
+                    </Link>
+                  </Button>
                   <DialogRoot>
                     <DialogTrigger asChild>
                       <Button size="sm" colorPalette="red" variant="outline">

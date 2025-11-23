@@ -48,7 +48,17 @@ function DeviceDetails() {
         </Link>
       </Button>
 
-      <Heading mb={6}>{device.name}</Heading>
+      <Flex justify="space-between" align="center" mb={6}>
+        <Heading>{device.name}</Heading>
+        <Button asChild colorPalette="blue" variant="outline">
+          <Link
+            to="/devices/$deviceId/edit"
+            params={{ deviceId: device.id }}
+          >
+            Edit
+          </Link>
+        </Button>
+      </Flex>
 
       <Card.Root>
         <Card.Body>
