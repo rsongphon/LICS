@@ -541,7 +541,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Success toast notification: "Experiment saved."
 - ✅ Button returns to normal state
 
-**Pass/Fail:** ___________
+**Pass/Fail:** Partially Pass, no "Saving..." indicator appears (button shows loading state) but experiment is saved.
 
 ---
 
@@ -555,7 +555,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ All property values preserved
 - ✅ Edges/connections preserved
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -570,7 +570,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Success toast notification: "Experiment compiled."
 - ✅ No error messages
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -585,7 +585,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Success notification
 - ✅ No errors
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -601,7 +601,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Syntax highlighting active
 - ✅ Code is read-only (cannot edit)
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -616,7 +616,8 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Code contains: `from psychopy import sound, gui, visual, core, data, event, logging, clock, colors, layout`
 - ✅ Code contains: `import numpy as np`
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
+   
 
 ---
 
@@ -629,7 +630,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Window size: `size=[1024, 768]`
 - ✅ Fullscreen: `fullscr=True`
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -642,7 +643,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Text property: `text="Press the spacebar"` (from Test 2.4.2)
 - ✅ Position: `pos=(0, 100)` or similar
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -654,7 +655,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Code contains: `event.BuilderKeyResponse()`
 - ✅ Component initialized correctly
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -670,7 +671,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Code contains: `core.quit()`
 - ✅ Code contains: `win.flip()`
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -682,7 +683,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Code contains: `win.close()`
 - ✅ Code contains: `core.quit()`
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -697,7 +698,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ No editor shown
 - ✅ No errors
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -726,7 +727,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Code is syntactically valid Python
 - ✅ All toast notifications appear correctly
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -741,14 +742,14 @@ This document provides comprehensive manual testing procedures for all features 
 **Expected Results:**
 - ✅ Swagger UI loads
 - ✅ API endpoints listed:
-  - `/api/login/access-token`
-  - `/api/users/`
-  - `/api/experiments/`
-  - `/api/experiments/{id}/compile`
-  - `/api/devices/`
+  - `/api/v1/login/access-token`
+  - `/api/v1/users/`
+  - `/api/v1/experiments/`
+  - `/api/v1/experiments/{id}/compile`
+  - `/api/v1/devices/`
 - ✅ Schemas visible
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -756,11 +757,11 @@ This document provides comprehensive manual testing procedures for all features 
 
 #### Test 3.2.1: Get Access Token
 **Steps:**
-1. In Swagger UI, expand `POST /api/login/access-token`
+1. In Swagger UI, expand `POST /api/v1/login/access-token`
 2. Click "Try it out"
 3. Enter:
    - `username`: `admin@lics.com`
-   - `password`: `changethis`
+   - `password`: `admin_password`
 4. Click "Execute"
 
 **Expected Results:**
@@ -768,9 +769,9 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Response body contains `access_token`
 - ✅ Token type: `bearer`
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
-**Notes:** Access Token: ___________
+**Notes:** Access Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NjQ1ODkzNjQsInN1YiI6ImUxZjU0NGE4LWRjMTItNDZjYS1iOGU4LWRkODM4NDE1MGUxZCJ9.XF7ngSkgQ_Q0_D5MPu9yqOcmlFfgVyoGbM88QGXPzAc
 
 ---
 
@@ -784,15 +785,15 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Lock icons turn locked
 - ✅ Now authorized to call protected endpoints
 
-**Pass/Fail:** ___________
+**Pass/Fail:** Unknow : It ask for admin user credentials instead of using the access token.
 
 ---
 
 ### 3.3 Experiments API
 
-#### Test 3.3.1: List Experiments (GET /api/experiments/)
+#### Test 3.3.1: List Experiments (GET /api/v1/experiments/)
 **Steps:**
-1. Expand `GET /api/experiments/`
+1. Expand `GET /api/v1/experiments/`
 2. Click "Try it out"
 3. Click "Execute"
 
@@ -801,14 +802,14 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Response body contains `data` array
 - ✅ Each experiment has: `id`, `name`, `description`, `created_at`, `created_by`
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
-#### Test 3.3.2: Get Single Experiment (GET /api/experiments/{id})
+#### Test 3.3.2: Get Single Experiment (GET /api/v1/experiments/{id})
 **Steps:**
 1. Copy an experiment ID from Test 3.3.1
-2. Expand `GET /api/experiments/{id}`
+2. Expand `GET /api/v1/experiments/{id}`
 3. Enter the ID
 4. Execute
 
@@ -817,14 +818,14 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Experiment details returned
 - ✅ Fields include: `psyexp_data`, `python_code`, `psychojs_code`
 
-**Pass/Fail:** ___________
+**Pass/Fail:** Failed retun 404 Error: Not Found
 
 ---
 
-#### Test 3.3.3: Compile Experiment (POST /api/experiments/{id}/compile)
+#### Test 3.3.3: Compile Experiment (POST /api/v1/experiments/{id}/compile)
 **Steps:**
 1. Use experiment ID with components
-2. Expand `POST /api/experiments/{id}/compile`
+2. Expand `POST /api/v1/experiments/{id}/compile`
 3. Enter ID
 4. Execute
 
@@ -833,15 +834,15 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Response includes updated `python_code` field
 - ✅ `python_code` is non-null and contains Python script
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
 ### 3.4 Devices API
 
-#### Test 3.4.1: List Devices (GET /api/devices/)
+#### Test 3.4.1: List Devices (GET /api/v1/devices/)
 **Steps:**
-1. Expand `GET /api/devices/`
+1. Expand `GET /api/v1/devices/`
 2. Execute
 
 **Expected Results:**
@@ -849,13 +850,13 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Response contains devices array
 - ✅ Each device has: `id`, `device_id`, `name`, `status`, `last_seen`
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
-#### Test 3.4.2: Register Device (POST /api/devices/register)
+#### Test 3.4.2: Register Device (POST /api/v1/devices/register)
 **Steps:**
-1. Expand `POST /api/devices/register`
+1. Expand `POST /api/v1/devices/register`
 2. Enter request body:
    ```json
    {
@@ -871,7 +872,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Device created
 - ✅ Response includes `api_key` (one-time display)
 
-**Pass/Fail:** ___________
+**Pass/Fail:** Partial Pass: no api_key is returned
 
 ---
 
@@ -885,15 +886,15 @@ This document provides comprehensive manual testing procedures for all features 
 2. Login:
    - System: PostgreSQL
    - Server: db
-   - Username: postgres
-   - Password: changethis
-   - Database: app
+   - Username: lics_user
+   - Password: PmrZTozdtyAeOUBtYGsUTMXjjiTrSX61ki8mI-Rb3j8
+   - Database: lics
 
 **Expected Results:**
 - ✅ Adminer UI loads
 - ✅ Successfully connected to database
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -908,7 +909,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Table: `alembic_version`
 - ✅ Table: `item` (from template, not used)
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -923,7 +924,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ `python_code` type: TEXT
 - ✅ Data shows experiments created during testing
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -939,7 +940,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Contains: `react_flow.edges` array
 - ✅ Contains: `component_props` object
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -953,7 +954,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Contains PsychoPy imports
 - ✅ Contains component definitions
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -971,7 +972,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Success notification shown
 - ✅ No errors
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 ---
 
@@ -985,7 +986,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ Warning to save first
 - ✅ Compilation succeeds
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass (Auto-saves before compiling)
 
 ---
 
@@ -999,7 +1000,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ User-friendly error message
 - ✅ No app crash
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 **Cleanup:** Restart backend: `docker-compose start backend`
 
@@ -1019,7 +1020,7 @@ This document provides comprehensive manual testing procedures for all features 
 - ✅ API returns 403 Forbidden
 - ✅ Proper error handling
 
-**Pass/Fail:** ___________
+**Pass/Fail:** ✅ Pass
 
 **Note:** If only one user exists, this test can be skipped.
 

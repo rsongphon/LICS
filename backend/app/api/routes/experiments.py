@@ -76,7 +76,7 @@ def read_experiment(
     if not experiment:
         raise HTTPException(status_code=404, detail="Experiment not found")
     if not current_user.is_superuser and (experiment.created_by != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
+        raise HTTPException(status_code=403, detail="You don't have permission to access this experiment")
     return experiment
 
 
@@ -95,7 +95,7 @@ def update_experiment(
     if not experiment:
         raise HTTPException(status_code=404, detail="Experiment not found")
     if not current_user.is_superuser and (experiment.created_by != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
+        raise HTTPException(status_code=403, detail="You don't have permission to access this experiment")
     experiment = crud.update_experiment(
         session=session, db_experiment=experiment, experiment_in=experiment_in
     )
@@ -116,7 +116,7 @@ def delete_experiment(
     if not experiment:
         raise HTTPException(status_code=404, detail="Experiment not found")
     if not current_user.is_superuser and (experiment.created_by != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
+        raise HTTPException(status_code=403, detail="You don't have permission to access this experiment")
     experiment = crud.delete_experiment(session=session, db_experiment=experiment)
     return experiment
 
@@ -137,7 +137,7 @@ def compile_experiment(
     if not experiment:
         raise HTTPException(status_code=404, detail="Experiment not found")
     if not current_user.is_superuser and (experiment.created_by != current_user.id):
-        raise HTTPException(status_code=400, detail="Not enough permissions")
+        raise HTTPException(status_code=403, detail="You don't have permission to access this experiment")
     
     # Compile
     try:
